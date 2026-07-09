@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Botnoi WebAvatar — Premium Interactive Agent Sandbox</title>
+  <meta name="description"
+    content="Next-generation conversational AI WebAvatar showcase by Botnoi Group. Experience high-fidelity interactive digital representatives, automated navigation, and premium sandboxed demos." />
+  
+  <!-- Premium Google Fonts for Thai & English -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Inject WebAvatar Widget JSSDK -->
+  <script>
+    window.ChatWidgetConfig = {
+      mode: "realtime-fullscreen",
+      avatarUrl: "Botnoi",
+      widgetId: "Botnoi",
+      greetingInstruction:"Greet the user in Thai.",
+      enableBubble: "false",
+      cameraOffset: "0,-0.1,0",
+      animationUrl: "Greeting",
+      defaultAnimationUrl: "Idleloop, idle_breatheloop, Idle_Swayloop",
+      randomGeneric: "false",
+      // avatarWidgetSrc: "/avatar-widget.js",
+    };
+    (function () {
+      if (document.getElementById('webavatar-jssdk')) return;
+      var s = document.createElement('script');
+      s.id = 'webavatar-jssdk';
+      s.src = 'https://webavatar.didthat.cc/chat-widget.js';
+      // s.src = '/chat-widget.js';
+      s.async = true;
+      (document.head || document.body).appendChild(s);
+    })();
+
+    // Random idle animation manager for disconnected state
+    (function () {
+      var isConnected = false;
+      var animationTimeout = null;
+      var minInterval = 30;
+      var maxInterval = 50;
+      var maxLoopTime = 10;
+      var animationReset= ['Idleloop', 'idle_breatheloop', 'Idle_Swayloop'];
+      var animations = ['GangnamStyle','fusionL','fusionR','Generic_HandFan',
+      'Generic_Lazy','Generic_look_around','Generic_Squat','GenericLookAround',
+      'Generic_Happy', 'funnypose', 'Excited_dance','Emote_OrangeJusticeLoop', 
+      'Emote_KpopLoop', 'Emote_InfiniDab_loop','angelTaisou','ArmWaveDanceloop',
+      'Bellydancing', 'chunibyou','Dance_INTERNET_YAMEROloop','Dance_Loli_Kami_Requiem',
+      'Dance_monkeyloop','Dance_washing','graceful_dance','HandpumpDanceloop',
+      'HipHopDanceloop','Humming','LookAround','LookingBehind','ModelPose',
+      'NervouslyLookAround','pose_peace1','Relax','RumbaDanceloop',
+      'SalsaDanceloop','SambaDance1loop','SambaDanceloop','ShowFullBody','ToothlessLoop'];
+
+      var resetTimeout = null;
+
+      // Parse list parameter if defined in config animations
+      if (window.ChatWidgetConfig && window.ChatWidgetConfig.animations) {
+        animations = window.ChatWidgetConfig.animations
+          .split(',')
+          .map(function (item) { return item.trim(); })
+          .filter(Boolean);
+      }
+
+      function triggerRandomAnimation() {
+        if (isConnected) return;
+        clearResetTimeout();
+
+        if (window.WebAvatar && typeof window.WebAvatar.loadAnimation === 'function') {
+          var anim = animations[Math.floor(Math.random() * animations.length)];
+          console.log('[Demo] Loading random idle animation in disconnected state:', anim);
+          window.WebAvatar.loadAnimation(anim);
+          window.WebAvatar.setEmotion('happy',10);
+
+          // If animation name has 'loop' in it, reset to animationReset after maxLoopTime seconds
+          if (anim.toLowerCase().indexOf('loop') !== -1) {
+            resetTimeout = setTimeout(function () {
+              if (isConnected) return;
+              var resetList = Array.isArray(animationReset) ? animationReset : (typeof animationReset === 'string' ? animationReset.split(',').map(function (item) { return item.trim(); }).filter(Boolean) : []);
+              var resetAnim = resetList[Math.floor(Math.random() * resetList.length)];
+              console.log('[Demo] Max loop time reached. Resetting animation to:', resetAnim);
+              window.WebAvatar.loadAnimation(resetAnim);
+              window.WebAvatar.setEmotion('idle',10);
+            }, maxLoopTime * 1000);
+          }
+        }
+        scheduleNext();
+      }
+
+      function scheduleNext() {
+        if (animationTimeout) clearTimeout(animationTimeout);
+        // Random interval between minInterval and maxInterval in seconds
+        var nextInterval = (minInterval + Math.random() * (maxInterval - minInterval)) * 1000;
+        animationTimeout = setTimeout(triggerRandomAnimation, nextInterval);
+      }
+
+      function startAnimations() {
+        scheduleNext();
+      }
+
+      function clearResetTimeout() {
+        if (resetTimeout) {
+          clearTimeout(resetTimeout);
+          resetTimeout = null;
+        }
+      }
+
+      function stopAnimations() {
+        if (animationTimeout) {
+          clearTimeout(animationTimeout);
+          animationTimeout = null;
+        }
+        clearResetTimeout();
+      }
+
+      // Listeners
+      window.addEventListener('avatar-widget-ready', function () {
+        console.log('[Demo] Avatar widget ready. Starting idle animations if disconnected.');
+        if (!isConnected) {
+          startAnimations();
+        }
+      });
+
+      window.addEventListener('onConnect', function () {
+        console.log('[Demo] Connected. Stopping idle animations.');
+        isConnected = true;
+        stopAnimations();
+      });
+
+      window.addEventListener('onDisconnect', function () {
+        console.log('[Demo] Disconnected. Restarting idle animations.');
+        isConnected = false;
+        startAnimations();
+      });
+    })();
+  </script>
+</body>
+</html>

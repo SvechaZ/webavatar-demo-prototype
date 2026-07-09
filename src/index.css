@@ -1,0 +1,317 @@
+@import "tailwindcss" source(none);
+@source "../src";
+
+
+/* Tailwind CSS v4 Theme Mapping */
+@theme {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
+  --color-success: var(--success);
+
+  --font-sans: "Prompt", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Prompt", "Roboto", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+}
+
+/* ═══════════════════════════════════════
+   PREMIUM LIGHT THEME DESIGN SYSTEM (ROOT)
+   Linear & Stripe caliber
+   ═══════════════════════════════════════ */
+:root {
+  font-size: 100%; /* Scales all rem font-sizes and spacings globally. Adjust this percentage to scale up/down. */
+  --radius: 1rem;
+
+  /* Color Palette - Clean Editorial Light Theme */
+  --background: #FAFBFC;
+  --foreground: #0A0A0B;
+  --card: #FFFFFF;
+  --card-foreground: #0A0A0B;
+  --popover: #FFFFFF;
+  --popover-foreground: #0A0A0B;
+  --primary: #6366F1;
+  /* Indigo-500 */
+  --primary-foreground: #FFFFFF;
+  --secondary: #EEF2F6;
+  /* Soft blue-gray */
+  --secondary-foreground: #4F46E5;
+  --muted: #F4F4F5;
+  /* Zinc-100 */
+  --muted-foreground: #71717A;
+  /* Zinc-500 */
+  --accent: #ECFDF5;
+  /* Emerald-50 tint */
+  --accent-foreground: #059669;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E4E4E7;
+  /* Zinc-200 */
+  --input: #FFFFFF;
+  --ring: #6366F1;
+  --brand: #6366F1;
+  --brand-foreground: #FFFFFF;
+  --cta: #06B6D4;
+  /* Cyan-500 */
+  --cta-foreground: #FFFFFF;
+  --success: #10B981;
+
+  /* Premium Gradients */
+  --grad-primary: linear-gradient(135deg, #6366F1 0%, #06B6D4 100%);
+  --grad-hover: linear-gradient(135deg, #4F46E5 0%, #0891B2 100%);
+  --grad-text: linear-gradient(135deg, #0A0A0B 0%, #27272A 100%);
+  --grad-mesh: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+
+  /* Transitions */
+  --transition-fast: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  --transition-normal: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  --transition-slow: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+
+  /* Sleek Soft Shadows & Glows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  --shadow-premium: 0 10px 30px -10px rgba(99, 102, 241, 0.08), 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+  --shadow-glow: 0 0 40px -10px rgba(99, 102, 241, 0.25);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "kern";
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--card-foreground);
+    line-height: 1.2;
+    text-wrap: balance;
+    /* Web Interface Guidelines */
+  }
+
+  h1 {
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    letter-spacing: -0.04em;
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    font-family: "Anuphan", sans-serif;
+  }
+
+  a:hover {
+    color: var(--cta);
+  }
+
+  div {
+    font-family: "Anuphan", sans-serif;
+  }
+
+  /* Focus States for Web Interface Guidelines */
+  *:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+  }
+}
+
+/* Beautiful Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E4E4E7;
+  border-radius: 9999px;
+  border: 2px solid var(--background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A1A1AA;
+}
+
+/* ═══════════════════════════════════════
+   SUB-THEME OVERRIDES (SATURATED PREMIUM LIGHT)
+   ═══════════════════════════════════════ */
+
+/* 1. Flight Booking Sub-Theme (Sky & Indigo Tech) */
+.flight-theme {
+  --radius: 1rem;
+  --background: #F4F9FF;
+  /* Clear pale sky blue */
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #0284C7;
+  /* Rich Sky Blue */
+  --primary-foreground: #FFFFFF;
+  --secondary: #E0F2FE;
+  --secondary-foreground: #0369A1;
+  --muted: #F1F5F9;
+  --muted-foreground: #475569;
+  --accent: #F0FDF4;
+  --accent-foreground: #16A34A;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #FFFFFF;
+  --ring: #0284C7;
+  --brand: #0284C7;
+  --brand-foreground: #FFFFFF;
+  --cta: #0369A1;
+  --cta-foreground: #FFFFFF;
+  --grad-primary: linear-gradient(135deg, #0284C7 0%, #3B82F6 100%);
+  --grad-hover: linear-gradient(135deg, #0369A1 0%, #2563EB 100%);
+  --grad-text: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  --grad-mesh: radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%);
+  background-image: var(--grad-mesh);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 2. Restaurant Food Ordering Sub-Theme (Warm Sand / Rich Emerald) */
+.order-theme {
+  --radius: 1.25rem;
+  --background: #FCFBF9;
+  /* Warm stone/sand white */
+  --foreground: #1C1917;
+  --card: #FFFFFF;
+  --card-foreground: #1C1917;
+  --popover: #FFFFFF;
+  --popover-foreground: #1C1917;
+  --primary: #10B981;
+  /* Saturated Emerald */
+  --primary-foreground: #FFFFFF;
+  --secondary: #ECFDF5;
+  --secondary-foreground: #047857;
+  --muted: #F5F5F4;
+  --muted-foreground: #57534E;
+  --accent: #FFFBEB;
+  /* Warm Amber */
+  --accent-foreground: #D97706;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E7E5E4;
+  --input: #FFFFFF;
+  --ring: #10B981;
+  --success: #10B981;
+  --brand: #10B981;
+  --brand-foreground: #FFFFFF;
+  --cta: #059669;
+  --cta-foreground: #FFFFFF;
+  --grad-primary: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --grad-hover: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --grad-text: linear-gradient(135deg, #1C1917 0%, #44403C 100%);
+  --grad-mesh: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(217, 119, 6, 0.08) 0px, transparent 50%);
+
+  --shadow-button: 0 4px 14px rgba(16, 185, 129, 0.2);
+  --shadow-button-hover: 0 6px 20px rgba(16, 185, 129, 0.3);
+  --shadow-card: 0 12px 40px -12px rgba(28, 25, 23, 0.08);
+  background-image: var(--grad-mesh);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ═══════════════════════════════════════
+   SUB-THEME COMPONENT SPECIFIC UTILITIES
+   ═══════════════════════════════════════ */
+
+/* Restaurant Utilities */
+.order-theme .card-lift {
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.order-theme .card-lift:hover {
+  box-shadow: 0 20px 40px -12px rgba(28, 25, 23, 0.16);
+}
+
+.order-theme .page-grid {
+  background-image: radial-gradient(circle at 1px 1px,
+      color-mix(in oklab, var(--primary) 8%, transparent) 1px,
+      transparent 0);
+  background-size: 24px 24px;
+}
+
+.order-theme .receipt-paper {
+  background-image: linear-gradient(to bottom,
+      transparent 31px,
+      color-mix(in oklab, var(--primary) 6%, transparent) 32px);
+  background-size: 100% 32px;
+}
