@@ -7,7 +7,6 @@ import AppFooter from '../components/AppFooter';
 import './Pages.css';
 import logoNewLightBlue from '../assets/logo-new-light-blue-02.png';
 import botnoiAirLogo from '../assets/BOTNOI-AIR-logo.png';
-import botnoiRestaurantLogo from '../assets/BOTNOI-Restaurant-logo.png';
 
 export default function Home() {
 
@@ -161,11 +160,13 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Card 2: Food Ordering */}
+          {/* Card 2: TN01-TN20 Adaptive Workspace Portal */}
           <div className="bento-card col-4" id="card-order-demo">
             <div className="bento-card-header">
-              <div className="bento-icon-alt-box" style={{ width: 'auto', padding: '1.5rem 0.75rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={botnoiRestaurantLogo} alt="Botnoi Restaurant" style={{ height: '4.5rem', width: 'auto', objectFit: 'contain' }} />
+              <div className="bento-icon-box" style={{ background: 'linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.08))', border: '1px solid rgba(16,185,129,0.2)' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
               </div>
               <h3 style={{ margin: 0, letterSpacing: '-0.02em' }}>{t('home.card_food_title')}</h3>
             </div>

@@ -468,12 +468,17 @@ function LiffApp() {
           return;
         }
 
-        // 2. ไม่มี session ใดเลย → redirect ไป login
-        if (!cancelled) navigate({ to: "/login" });
+        // 2. ไม่มี session ใดเลย → ตั้งค่าเป็น Guest เพื่อเล่นเดโมโดยไม่ต้อง Login
+        if (!cancelled) {
+          console.log("[Auth Guard] No session found. Falling back to guest mode for demo.");
+          setProfile({ userId: "guest", displayName: "ลูกค้าหน้าร้าน" } as LiffProfile);
+          setLiffReady(true);
+        }
       } catch (err) {
         if (!cancelled) {
           console.error("[Auth Guard error]", err);
-          navigate({ to: "/login" });
+          setProfile({ userId: "guest", displayName: "ลูกค้าหน้าร้าน" } as LiffProfile);
+          setLiffReady(true);
         }
       }
     }
