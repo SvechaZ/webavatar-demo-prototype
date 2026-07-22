@@ -402,11 +402,10 @@ export default function ITStoreDemo() {
                 return (
                   <button
                     key={cat}
-                    className={`relative shrink-0 snap-start px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer border ${
-                      active
+                    className={`relative shrink-0 snap-start px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer border ${active
                         ? "border-transparent text-white"
                         : "text-slate-500 border-slate-200 hover:text-slate-800 hover:bg-slate-50"
-                    }`}
+                      }`}
                     style={active ? { background: "linear-gradient(135deg,#6366f1,#8b5cf6)" } : {}}
                     onClick={() => setActiveCategory(cat)}
                     role="tab"

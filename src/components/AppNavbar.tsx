@@ -11,6 +11,19 @@ export default function AppNavbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { language, setLanguage, t } = useTranslation();
 
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [mobileLangMenuOpen, setMobileLangMenuOpen] = useState(false);
+
+  const supportedLanguages = [
+    { code: 'en', label: 'EN', flagCode: 'us', native: 'English' },
+    { code: 'th', label: 'TH', flagCode: 'th', native: 'ไทย' },
+    { code: 'zh', label: 'ZH', flagCode: 'cn', native: '中文' },
+    { code: 'ja', label: 'JA', flagCode: 'jp', native: '日本語' },
+    { code: 'ko', label: 'KO', flagCode: 'kr', native: '한국어' },
+    { code: 'es', label: 'ES', flagCode: 'es', native: 'Español' },
+    { code: 'fr', label: 'FR', flagCode: 'fr', native: 'Français' },
+  ] as const;
+
   const isActive = (path: string) => {
     if (path === '/') {
       return location.pathname === '/';
@@ -184,50 +197,126 @@ export default function AppNavbar() {
           transition={{ delay: 0.25, duration: 0.5 }}
         >
           {/* Language Switch Toggle */}
-          <div className="language-toggle" style={{
-            display: 'flex',
-            gap: '0.25rem',
-            backgroundColor: isSitePage ? 'rgba(28, 25, 23, 0.5)' : 'rgba(244, 244, 245, 0.9)',
-            borderRadius: '10px',
-            padding: '3px',
-            border: `1px solid ${isSitePage ? 'rgba(244, 63, 94, 0.2)' : 'rgba(228, 228, 231, 0.8)'}`
-          }}>
+          <div style={{ position: 'relative', zIndex: 10 }}>
             <button
-              onClick={() => setLanguage('en')}
+              onClick={() => setLangMenuOpen(!langMenuOpen)}
               style={{
-                padding: '0.3rem 0.6rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                backgroundColor: isSitePage ? 'rgba(28, 25, 23, 0.5)' : 'rgba(244, 244, 245, 0.9)',
+                borderRadius: '10px',
+                padding: '0.4rem 0.8rem',
+                border: `1px solid ${isSitePage ? 'rgba(244, 63, 94, 0.2)' : 'rgba(228, 228, 231, 0.8)'}`,
+                cursor: 'pointer',
                 fontSize: '0.75rem',
                 fontWeight: '700',
-                borderRadius: '7px',
-                border: 'none',
-                cursor: 'pointer',
+                color: isSitePage ? '#FFFFFF' : 'var(--primary)',
                 transition: 'all 0.2s',
-                backgroundColor: language === 'en' ? (isSitePage ? 'rgba(239, 68, 68, 0.2)' : '#FFFFFF') : 'transparent',
-                color: language === 'en' ? (isSitePage ? '#FFFFFF' : 'var(--primary)') : 'var(--muted-foreground)',
-                boxShadow: language === 'en' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
               }}
-              id="lang-toggle-en"
+              id="lang-dropdown-trigger"
             >
-              EN
+              <img 
+                src={`https://flagcdn.com/w40/${supportedLanguages.find(l => l.code === language)?.flagCode || 'us'}.png`}
+                alt={language}
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '1px solid rgba(0,0,0,0.08)'
+                }}
+              />
+              <span>{language.toUpperCase()}</span>
+              <span style={{ 
+                fontSize: '0.6rem', 
+                opacity: 0.7, 
+                display: 'inline-block',
+                transform: langMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s'
+              }}>▼</span>
             </button>
-            <button
-              onClick={() => setLanguage('th')}
-              style={{
-                padding: '0.3rem 0.6rem',
-                fontSize: '0.75rem',
-                fontWeight: '700',
-                borderRadius: '7px',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                backgroundColor: language === 'th' ? (isSitePage ? 'rgba(239, 68, 68, 0.2)' : '#FFFFFF') : 'transparent',
-                color: language === 'th' ? (isSitePage ? '#FFFFFF' : 'var(--primary)') : 'var(--muted-foreground)',
-                boxShadow: language === 'th' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-              }}
-              id="lang-toggle-th"
-            >
-              TH
-            </button>
+
+            {langMenuOpen && (
+              <>
+                {/* Backdrop overlay */}
+                <div 
+                  onClick={() => setLangMenuOpen(false)} 
+                  style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 998,
+                    backgroundColor: 'transparent',
+                  }}
+                />
+                
+                {/* Dropdown list */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 0.5rem)',
+                    right: 0,
+                    backgroundColor: isSitePage ? 'rgba(28, 25, 23, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                    border: `1px solid ${isSitePage ? 'rgba(244, 63, 94, 0.15)' : 'rgba(228, 228, 231, 0.85)'}`,
+                    borderRadius: '12px',
+                    padding: '0.4rem',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+                    minWidth: '150px',
+                    zIndex: 999,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.2rem',
+                  }}
+                  id="lang-dropdown-menu"
+                >
+                  {supportedLanguages.map((lang) => {
+                    const active = language === lang.code;
+                    return (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setLanguage(lang.code);
+                          setLangMenuOpen(false);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          padding: '0.45rem 0.6rem',
+                          borderRadius: '8px',
+                          border: 'none',
+                          backgroundColor: active ? (isSitePage ? 'rgba(239, 68, 68, 0.15)' : 'rgba(99, 102, 241, 0.08)') : 'transparent',
+                          color: active ? (isSitePage ? '#FFFFFF' : 'var(--primary)') : (isSitePage ? '#A1A1AA' : 'var(--muted-foreground)'),
+                          fontSize: '0.75rem',
+                          fontWeight: active ? '700' : '500',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                        }}
+                        className={`lang-option-${lang.code}`}
+                      >
+                        <span style={{ flex: 1 }}>{lang.native}</span>
+                        <img 
+                          src={`https://flagcdn.com/w40/${lang.flagCode}.png`}
+                          alt={lang.label}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            border: '1px solid rgba(0,0,0,0.08)'
+                          }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="widget-indicator" id="widget-status">
@@ -289,51 +378,125 @@ export default function AppNavbar() {
                 </span>
                 
                 {/* Language Switch Toggle for Mobile */}
-                <div className="language-toggle" style={{
-                  display: 'flex',
-                  gap: '0.25rem',
-                  backgroundColor: isSitePage ? 'rgba(28, 25, 23, 0.5)' : 'rgba(244, 244, 245, 0.9)',
-                  borderRadius: '10px',
-                  padding: '3px',
-                  border: `1px solid ${isSitePage ? 'rgba(244, 63, 94, 0.2)' : 'rgba(228, 228, 231, 0.8)'}`,
-                  marginRight: '1rem'
-                }}>
+                <div style={{ position: 'relative', marginRight: '1rem', zIndex: 10 }}>
                   <button
-                    onClick={() => setLanguage('en')}
+                    onClick={() => setMobileLangMenuOpen(!mobileLangMenuOpen)}
                     style={{
-                      padding: '0.25rem 0.5rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      backgroundColor: isSitePage ? 'rgba(28, 25, 23, 0.5)' : 'rgba(244, 244, 245, 0.9)',
+                      borderRadius: '10px',
+                      padding: '0.4rem 0.8rem',
+                      border: `1px solid ${isSitePage ? 'rgba(244, 63, 94, 0.2)' : 'rgba(228, 228, 231, 0.8)'}`,
+                      cursor: 'pointer',
                       fontSize: '0.7rem',
                       fontWeight: '700',
-                      borderRadius: '6px',
-                      border: 'none',
-                      cursor: 'pointer',
+                      color: isSitePage ? '#FFFFFF' : 'var(--primary)',
                       transition: 'all 0.2s',
-                      backgroundColor: language === 'en' ? (isSitePage ? 'rgba(239, 68, 68, 0.2)' : '#FFFFFF') : 'transparent',
-                      color: language === 'en' ? (isSitePage ? '#FFFFFF' : 'var(--primary)') : 'var(--muted-foreground)',
-                      boxShadow: language === 'en' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                     }}
-                    id="mobile-lang-toggle-en"
+                    id="mobile-lang-dropdown-trigger"
                   >
-                    EN
+                    <img 
+                      src={`https://flagcdn.com/w40/${supportedLanguages.find(l => l.code === language)?.flagCode || 'us'}.png`}
+                      alt={language}
+                      style={{
+                        width: '14px',
+                        height: '14px',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '1px solid rgba(0,0,0,0.08)'
+                      }}
+                    />
+                    <span>{language.toUpperCase()}</span>
+                    <span style={{ 
+                      fontSize: '0.55rem', 
+                      opacity: 0.7, 
+                      display: 'inline-block',
+                      transform: mobileLangMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s'
+                    }}>▼</span>
                   </button>
-                  <button
-                    onClick={() => setLanguage('th')}
-                    style={{
-                      padding: '0.25rem 0.5rem',
-                      fontSize: '0.7rem',
-                      fontWeight: '700',
-                      borderRadius: '6px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      backgroundColor: language === 'th' ? (isSitePage ? 'rgba(239, 68, 68, 0.2)' : '#FFFFFF') : 'transparent',
-                      color: language === 'th' ? (isSitePage ? '#FFFFFF' : 'var(--primary)') : 'var(--muted-foreground)',
-                      boxShadow: language === 'th' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                    }}
-                    id="mobile-lang-toggle-th"
-                  >
-                    TH
-                  </button>
+
+                  {mobileLangMenuOpen && (
+                    <>
+                      {/* Backdrop overlay */}
+                      <div 
+                        onClick={() => setMobileLangMenuOpen(false)} 
+                        style={{
+                          position: 'fixed',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          zIndex: 998,
+                          backgroundColor: 'transparent',
+                        }}
+                      />
+                      
+                      {/* Dropdown list */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 'calc(100% + 0.5rem)',
+                          right: 0,
+                          backgroundColor: isSitePage ? 'rgba(28, 25, 23, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                          backdropFilter: 'blur(12px)',
+                          border: `1px solid ${isSitePage ? 'rgba(244, 63, 94, 0.15)' : 'rgba(228, 228, 231, 0.85)'}`,
+                          borderRadius: '12px',
+                          padding: '0.4rem',
+                          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+                          minWidth: '140px',
+                          zIndex: 999,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.2rem',
+                        }}
+                        id="mobile-lang-dropdown-menu"
+                      >
+                        {supportedLanguages.map((lang) => {
+                          const active = language === lang.code;
+                          return (
+                            <button
+                              key={lang.code}
+                              onClick={() => {
+                                setLanguage(lang.code);
+                                setMobileLangMenuOpen(false);
+                              }}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                padding: '0.4rem 0.5rem',
+                                borderRadius: '8px',
+                                border: 'none',
+                                backgroundColor: active ? (isSitePage ? 'rgba(239, 68, 68, 0.15)' : 'rgba(99, 102, 241, 0.08)') : 'transparent',
+                                color: active ? (isSitePage ? '#FFFFFF' : 'var(--primary)') : (isSitePage ? '#A1A1AA' : 'var(--muted-foreground)'),
+                                fontSize: '0.7rem',
+                                fontWeight: active ? '700' : '500',
+                                textAlign: 'left',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                              }}
+                            >
+                              <span style={{ flex: 1 }}>{lang.native}</span>
+                              <img 
+                                src={`https://flagcdn.com/w40/${lang.flagCode}.png`}
+                                alt={lang.label}
+                                style={{
+                                  width: '14px',
+                                  height: '14px',
+                                  borderRadius: '50%',
+                                  objectFit: 'cover',
+                                  border: '1px solid rgba(0,0,0,0.08)'
+                                }}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <button

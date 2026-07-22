@@ -48,7 +48,8 @@
    Linear & Stripe caliber
    ═══════════════════════════════════════ */
 :root {
-  font-size: 100%; /* Scales all rem font-sizes and spacings globally. Adjust this percentage to scale up/down. */
+  font-size: 100%;
+  /* Scales all rem font-sizes and spacings globally. Adjust this percentage to scale up/down. */
   --radius: 1rem;
 
   /* Color Palette - Clean Editorial Light Theme */
