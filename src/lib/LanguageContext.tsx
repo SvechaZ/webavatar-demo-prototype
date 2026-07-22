@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { translations, type TranslationKey } from './translations';
 
-type Language = 'en' | 'th';
+type Language = 'en' | 'th' | 'zh' | 'ja' | 'ko' | 'es' | 'fr';
 
 interface LanguageContextType {
   language: Language;
@@ -15,7 +15,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>(() => {
     try {
       const saved = window.localStorage.getItem('webavatar-demo-lang');
-      return (saved === 'th' || saved === 'en') ? saved : 'en';
+      const validLangs: Language[] = ['en', 'th', 'zh', 'ja', 'ko', 'es', 'fr'];
+      return (saved && validLangs.includes(saved as Language)) ? (saved as Language) : 'en';
     } catch {
       return 'en';
     }

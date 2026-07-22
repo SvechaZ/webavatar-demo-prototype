@@ -5,6 +5,7 @@ import { useTranslation } from "@/lib/LanguageContext";
 import {
   Check,
   ChevronRight,
+  ChevronDown,
   Minus,
   Plus,
   ShoppingBag,
@@ -49,26 +50,26 @@ export interface HouseItem {
 }
 
 const projectData: HouseItem[] = [
-  { id: 1, code: 'TN01', name: 'Modern Cabin', style: 'Modern Minimalist', type: 'accommodation', color: '#6366F1', basePrice: 1800000, progress: 85 },
-  { id: 2, code: 'TN02', name: 'Classic Luxury', style: 'Neo-Classical', type: 'flight', color: '#b45309', basePrice: 4200000, progress: 45 },
-  { id: 3, code: 'TN03', name: 'Scandinavian Frame', style: 'Nordic Timber', type: 'ecommerce', color: '#059669', basePrice: 2100000, progress: 90 },
-  { id: 4, code: 'TN04', name: 'Concrete Geometric Box', style: 'Brutalist Concrete', type: 'ecommerce', color: '#1e293b', basePrice: 3100000, progress: 10 },
-  { id: 5, code: 'TN05', name: 'A-Frame Timber Retreat', style: 'Cozy Wood Cabin', type: 'accommodation', color: '#78350f', basePrice: 1500000, progress: 100 },
-  { id: 6, code: 'TN06', name: 'Sunset Glass Pavilion', style: 'Glass Contemporary', type: 'flight', color: '#0284c7', basePrice: 2900000, progress: 60 },
-  { id: 7, code: 'TN07', name: 'Eco Earth Dome', style: 'Organic Earth Dome', type: 'restaurant', color: '#10B981', basePrice: 1200000, progress: 80 },
-  { id: 8, code: 'TN08', name: 'Brick Facade Loft', style: 'Industrial Brickwork', type: 'ecommerce', color: '#991b1b', basePrice: 2500000, progress: 75 },
-  { id: 9, code: 'TN09', name: 'Zen Bamboo Studio', style: 'Japanese Zen', type: 'accommodation', color: '#16a34a', basePrice: 1900000, progress: 100 },
-  { id: 10, code: 'TN10', name: 'Container Modular', style: 'Modular Container', type: 'flight', color: '#ca8a04', basePrice: 1400000, progress: 30 },
-  { id: 11, code: 'TN11', name: 'Suburban Gable House', style: 'Mid-Century Gable', type: 'restaurant', color: '#475569', basePrice: 2350000, progress: 5 },
-  { id: 12, code: 'TN12', name: 'Tropical Cantilever', style: 'Tropical Canopy', type: 'ecommerce', color: '#0d9488', basePrice: 3800000, progress: 95 },
-  { id: 13, code: 'TN13', name: 'Hillside Step Estate', style: 'Step Architecture', type: 'accommodation', color: '#4338ca', basePrice: 4700000, progress: 55 },
-  { id: 14, code: 'TN14', name: 'Atrium Courtyard', style: 'Atrium Courtyard', type: 'flight', color: '#db2777', basePrice: 3200000, progress: 100 },
-  { id: 15, code: 'TN15', name: 'Monolithic Block', style: 'Flat-Roof Minimal', type: 'restaurant', color: '#0f172a', basePrice: 2700000, progress: 15 },
-  { id: 16, code: 'TN16', name: 'Steel-Beam Lookout', style: 'Modern Steel Frame', type: 'ecommerce', color: '#334155', basePrice: 2900000, progress: 70 },
-  { id: 17, code: 'TN17', name: 'Mediterranean Clay Casa', style: 'Spanish Terracotta', type: 'accommodation', color: '#c2410c', basePrice: 3100000, progress: 80 },
-  { id: 18, code: 'TN18', name: 'Futuristic Curved Shell', style: 'Parametric Fluid', type: 'flight', color: '#06b6d4', basePrice: 5500000, progress: 0 },
-  { id: 19, code: 'TN19', name: 'Victorian Restoration', style: 'Victorian Heritage', type: 'restaurant', color: '#6d28d9', basePrice: 3600000, progress: 100 },
-  { id: 20, code: 'TN20', name: 'Stilt Water Retreat', style: 'Waterfront Living', type: 'ecommerce', color: '#0369a1', basePrice: 2200000, progress: 40 }
+  { id: 1, code: 'TN01', name: '01-the-chill-crew', style: 'Modern Minimalist', type: 'accommodation', color: '#6366F1', basePrice: 1800000, progress: 85 },
+  { id: 2, code: 'TN02', name: '02-cozy-oracles', style: 'Neo-Classical', type: 'flight', color: '#b45309', basePrice: 4200000, progress: 45 },
+  { id: 3, code: 'TN03', name: '03-controller-kings', style: 'Nordic Timber', type: 'ecommerce', color: '#059669', basePrice: 2100000, progress: 90 },
+  { id: 4, code: 'TN04', name: '04-the-netflix-hermits', style: 'Brutalist Concrete', type: 'ecommerce', color: '#1e293b', basePrice: 3100000, progress: 10 },
+  { id: 5, code: 'TN05', name: '05-aesthetic-dreamers', style: 'Cozy Wood Cabin', type: 'accommodation', color: '#78350f', basePrice: 1500000, progress: 100 },
+  { id: 6, code: 'TN06', name: '06-lo-fi-homebodies', style: 'Glass Contemporary', type: 'flight', color: '#0284c7', basePrice: 2900000, progress: 60 },
+  { id: 7, code: 'TN07', name: '07-steak-game-bros', style: 'Organic Earth Dome', type: 'restaurant', color: '#10B981', basePrice: 1200000, progress: 80 },
+  { id: 8, code: 'TN08', name: '08-vibe-architects', style: 'Industrial Brickwork', type: 'ecommerce', color: '#991b1b', basePrice: 2500000, progress: 75 },
+  { id: 9, code: 'TN09', name: '09-sunset-superfans', style: 'Japanese Zen', type: 'accommodation', color: '#16a34a', basePrice: 1900000, progress: 100 },
+  { id: 10, code: 'TN10', name: '10-lazy-mermaids', style: 'Modular Container', type: 'flight', color: '#ca8a04', basePrice: 1400000, progress: 30 },
+  { id: 11, code: 'TN11', name: '11-the-sharp-cuts', style: 'Mid-Century Gable', type: 'restaurant', color: '#475569', basePrice: 2350000, progress: 5 },
+  { id: 12, code: 'TN12', name: '12-coastal-avengers', style: 'Tropical Canopy', type: 'ecommerce', color: '#0d9488', basePrice: 3800000, progress: 95 },
+  { id: 13, code: 'TN13', name: '13-the-dungeon-masters', style: 'Step Architecture', type: 'accommodation', color: '#4338ca', basePrice: 4700000, progress: 55 },
+  { id: 14, code: 'TN14', name: '14-the-all-rounders', style: 'Atrium Courtyard', type: 'flight', color: '#db2777', basePrice: 3200000, progress: 100 },
+  { id: 15, code: 'TN15', name: '15-mountain-mode', style: 'Flat-Roof Minimal', type: 'restaurant', color: '#0f172a', basePrice: 2700000, progress: 15 },
+  { id: 16, code: 'TN16', name: '16-blue-hour-society', style: 'Modern Steel Frame', type: 'ecommerce', color: '#334155', basePrice: 2900000, progress: 70 },
+  { id: 17, code: 'TN17', name: '17-midnight-raiders', style: 'Spanish Terracotta', type: 'accommodation', color: '#c2410c', basePrice: 3100000, progress: 80 },
+  { id: 18, code: 'TN18', name: '18-indie-mountain-kids', style: 'Parametric Fluid', type: 'flight', color: '#06b6d4', basePrice: 5500000, progress: 0 },
+  { id: 19, code: 'TN19', name: '19-ocean-avengers', style: 'Victorian Restoration', type: 'restaurant', color: '#6d28d9', basePrice: 3600000, progress: 100 },
+  { id: 20, code: 'TN20', name: '20-final-boss-crew', style: 'Waterfront Living', type: 'ecommerce', color: '#0369a1', basePrice: 2200000, progress: 40 }
 ];
 
 // Kanban Database
@@ -122,12 +123,13 @@ const foodMenu: MenuItem[] = [
 
 export default function OrderDemo() {
   const { language } = useTranslation();
-  const [activeHouseId, setActiveHouseId] = useState<number>(7); // Default to House 7 (Eco Earth Dome)
+  const [activeHouseId, setActiveHouseId] = useState<number>(7); // Default to House 7 (07-steak-game-bros)
   const [activeTab, setActiveTab] = useState<"kanban" | "demo">("demo");
   const [demoRole, setDemoRole] = useState<string>("customer");
   const [sprint, setSprint] = useState<number>(1);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
 
   // Accommodation demo states
   const [checkIn, setCheckIn] = useState("");
@@ -274,22 +276,52 @@ export default function OrderDemo() {
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2 font-mono">
                 {language === 'en' ? 'Project Selection' : 'เลือกโครงการ'}
               </span>
-              <div className="relative flex items-center bg-white border border-stone-200 rounded-xl px-3 py-2 shadow-sm group">
-                <Search className="size-4 text-stone-400 mr-2 shrink-0" />
-                <select
-                  value={activeHouseId}
-                  onChange={(e) => setActiveHouseId(Number(e.target.value))}
-                  id="house-selector-sidebar"
-                  className="bg-transparent text-xs text-stone-800 font-extrabold w-full focus:outline-none appearance-none cursor-pointer pr-4"
-                  aria-label="เลือกโครงการบ้าน 20 หลัง"
+              <div className="relative" id="project-dropdown-container">
+                <button
+                  onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
+                  className="w-full flex items-center bg-white border border-stone-200 hover:border-stone-300 rounded-xl px-3 py-2.5 shadow-sm text-left cursor-pointer transition-colors"
+                  id="house-selector-sidebar-trigger"
                 >
-                  {projectData.map((house) => (
-                    <option key={house.id} value={house.id} className="bg-white text-stone-800 font-semibold py-2">
-                      {house.code} - {house.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3 pointer-events-none text-stone-400 text-[10px]">▼</div>
+                  <Search className="size-4 text-stone-400 mr-2 shrink-0" />
+                  <span className="text-xs text-stone-800 font-extrabold flex-1 truncate">
+                    {activeHouse.code} - {activeHouse.name}
+                  </span>
+                  <ChevronDown className={`size-3 text-stone-400 transition-transform ${projectDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {projectDropdownOpen && (
+                  <>
+                    {/* Transparent overlay to close dropdown */}
+                    <div 
+                      className="fixed inset-0 z-40 bg-transparent" 
+                      onClick={() => setProjectDropdownOpen(false)} 
+                    />
+                    
+                    {/* Dropdown Popover */}
+                    <div className="absolute left-0 right-0 mt-1.5 bg-white border border-stone-200 rounded-2xl shadow-xl z-50 max-h-72 overflow-y-auto p-1.5 space-y-0.5 no-scrollbar scroll-smooth">
+                      {projectData.map((house) => {
+                        const isSelected = house.id === activeHouseId;
+                        return (
+                          <button
+                            key={house.id}
+                            onClick={() => {
+                              setActiveHouseId(house.id);
+                              setProjectDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-between ${
+                              isSelected
+                                ? "bg-sky-50 text-sky-800"
+                                : "text-stone-700 hover:bg-stone-50 hover:text-stone-900"
+                            }`}
+                          >
+                            <span className="truncate">{house.code} - {house.name}</span>
+                            {isSelected && <Check className="size-3 text-sky-600 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
