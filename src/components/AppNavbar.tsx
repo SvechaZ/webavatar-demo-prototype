@@ -216,7 +216,7 @@ export default function AppNavbar() {
               }}
               id="lang-dropdown-trigger"
             >
-              <img 
+              <img
                 src={`https://flagcdn.com/w40/${supportedLanguages.find(l => l.code === language)?.flagCode || 'us'}.png`}
                 alt={language}
                 style={{
@@ -228,9 +228,9 @@ export default function AppNavbar() {
                 }}
               />
               <span>{language.toUpperCase()}</span>
-              <span style={{ 
-                fontSize: '0.6rem', 
-                opacity: 0.7, 
+              <span style={{
+                fontSize: '0.6rem',
+                opacity: 0.7,
                 display: 'inline-block',
                 transform: langMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                 transition: 'transform 0.2s'
@@ -240,8 +240,8 @@ export default function AppNavbar() {
             {langMenuOpen && (
               <>
                 {/* Backdrop overlay */}
-                <div 
-                  onClick={() => setLangMenuOpen(false)} 
+                <div
+                  onClick={() => setLangMenuOpen(false)}
                   style={{
                     position: 'fixed',
                     top: 0,
@@ -252,7 +252,7 @@ export default function AppNavbar() {
                     backgroundColor: 'transparent',
                   }}
                 />
-                
+
                 {/* Dropdown list */}
                 <div
                   style={{
@@ -300,7 +300,7 @@ export default function AppNavbar() {
                         className={`lang-option-${lang.code}`}
                       >
                         <span style={{ flex: 1 }}>{lang.native}</span>
-                        <img 
+                        <img
                           src={`https://flagcdn.com/w40/${lang.flagCode}.png`}
                           alt={lang.label}
                           style={{
@@ -376,7 +376,7 @@ export default function AppNavbar() {
                   <img src={textLogoNew} alt="Botnoi" style={{ height: '1.15rem', objectFit: 'contain' }} />
                   <span>Labs</span>
                 </span>
-                
+
                 {/* Language Switch Toggle for Mobile */}
                 <div style={{ position: 'relative', marginRight: '1rem', zIndex: 10 }}>
                   <button
@@ -397,7 +397,7 @@ export default function AppNavbar() {
                     }}
                     id="mobile-lang-dropdown-trigger"
                   >
-                    <img 
+                    <img
                       src={`https://flagcdn.com/w40/${supportedLanguages.find(l => l.code === language)?.flagCode || 'us'}.png`}
                       alt={language}
                       style={{
@@ -409,9 +409,9 @@ export default function AppNavbar() {
                       }}
                     />
                     <span>{language.toUpperCase()}</span>
-                    <span style={{ 
-                      fontSize: '0.55rem', 
-                      opacity: 0.7, 
+                    <span style={{
+                      fontSize: '0.55rem',
+                      opacity: 0.7,
                       display: 'inline-block',
                       transform: mobileLangMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                       transition: 'transform 0.2s'
@@ -421,8 +421,8 @@ export default function AppNavbar() {
                   {mobileLangMenuOpen && (
                     <>
                       {/* Backdrop overlay */}
-                      <div 
-                        onClick={() => setMobileLangMenuOpen(false)} 
+                      <div
+                        onClick={() => setMobileLangMenuOpen(false)}
                         style={{
                           position: 'fixed',
                           top: 0,
@@ -433,7 +433,7 @@ export default function AppNavbar() {
                           backgroundColor: 'transparent',
                         }}
                       />
-                      
+
                       {/* Dropdown list */}
                       <div
                         style={{
@@ -480,7 +480,7 @@ export default function AppNavbar() {
                               }}
                             >
                               <span style={{ flex: 1 }}>{lang.native}</span>
-                              <img 
+                              <img
                                 src={`https://flagcdn.com/w40/${lang.flagCode}.png`}
                                 alt={lang.label}
                                 style={{
