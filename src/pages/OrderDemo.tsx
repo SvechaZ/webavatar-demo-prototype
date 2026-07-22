@@ -204,6 +204,7 @@ export default function OrderDemo() {
       const orders = savedOrders ? JSON.parse(savedOrders) : [];
       orders.unshift(nextReceipt);
       window.localStorage.setItem("botnoi-restaurant-orders", JSON.stringify(orders));
+      window.dispatchEvent(new CustomEvent("local_order_placed"));
     } catch (e) {
       console.error(e);
     }
