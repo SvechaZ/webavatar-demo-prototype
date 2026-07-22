@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useTranslation } from "@/lib/LanguageContext";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Luggage, Coffee, Mic, Plane } from "lucide-react";
 import { saveBooking } from "@/lib/bookings";
 import { toast, Toaster } from "sonner";
 import PageSkeleton from "@/components/PageSkeleton";
@@ -36,6 +37,7 @@ interface BookingForm {
   passengerName: string;
   email: string;
   phone: string;
+  seat: string;
 }
 
 export default function FlightDemo() {
@@ -44,6 +46,7 @@ export default function FlightDemo() {
   const [tripType, setTripType] = useState<"round" | "oneway">("round");
   const [ticketBooking, setTicketBooking] = useState<BookingForm | null>(null);
   const [boardingPassOpen, setBoardingPassOpen] = useState(false);
+  const [seatMapOpen, setSeatMapOpen] = useState(false);
   const [form, setForm] = useState<BookingForm>({
     from: "กรุงเทพฯ (DMK)",
     to: "เชียงใหม่ (CNX)",
@@ -54,6 +57,7 @@ export default function FlightDemo() {
     passengerName: "",
     email: "",
     phone: "",
+    seat: "",
   });
 
   // Show page skeleton until first paint completes
@@ -108,7 +112,7 @@ export default function FlightDemo() {
       console.error("Failed to save booking:", err);
     }
     setBoardingPassOpen(true);
-    setForm({ ...form, passengerName: "", email: "", phone: "", promoCode: "" });
+    setForm({ ...form, passengerName: "", email: "", phone: "", promoCode: "", seat: "" });
   }
 
   return (
@@ -126,6 +130,15 @@ export default function FlightDemo() {
             onClose={() => setBoardingPassOpen(false)}
           />
         )}
+
+        <SeatMapModal
+          open={seatMapOpen}
+          onClose={() => setSeatMapOpen(false)}
+          selectedSeat={form.seat}
+          onSelectSeat={(seat) => setForm({ ...form, seat })}
+          fromCity={form.from}
+          toCity={form.to}
+        />
 
         {/* HERO with image background & parallax */}
         <section className="relative isolate overflow-hidden text-white min-h-[500px] flex flex-col justify-between">
@@ -150,7 +163,7 @@ export default function FlightDemo() {
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-sky-700 hover:text-sky-900 hover:bg-sky-50 rounded-full transition-all"
                     id="nav-flight-boarding-pass"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" /><line x1="12" y1="12" x2="12" y2="16" /><line x1="10" y1="14" x2="14" y2="14" /></svg>
                     {t('flight.nav_receipt') || 'Boarding Pass'}
                   </button>
                 )}
@@ -219,7 +232,7 @@ export default function FlightDemo() {
             </div>
 
             <form onSubmit={submit} className="grid md:grid-cols-2 gap-4">
-              <Field label={t('flight.from')} htmlFor="fromCity">
+              <Field label={t('flight.from')} htmlFor="fromCity" required>
                 <select
                   id="fromCity"
                   name="fromCity"
@@ -234,7 +247,7 @@ export default function FlightDemo() {
                 </select>
               </Field>
 
-              <Field label={t('flight.to')} htmlFor="toCity">
+              <Field label={t('flight.to')} htmlFor="toCity" required>
                 <select
                   id="toCity"
                   name="toCity"
@@ -249,7 +262,7 @@ export default function FlightDemo() {
                 </select>
               </Field>
 
-              <Field label={t('flight.depart')} htmlFor="departDate">
+              <Field label={t('flight.depart')} htmlFor="departDate" required>
                 <input
                   type="date"
                   id="departDate"
@@ -262,7 +275,7 @@ export default function FlightDemo() {
               </Field>
 
               {tripType === "round" ? (
-                <Field label={t('flight.return')} htmlFor="returnDate">
+                <Field label={t('flight.return')} htmlFor="returnDate" required>
                   <input
                     type="date"
                     id="returnDate"
@@ -277,7 +290,7 @@ export default function FlightDemo() {
                 <div className="hidden md:block"></div>
               )}
 
-              <Field label={t('flight.passengers')} htmlFor="passengers">
+              <Field label={t('flight.passengers')} htmlFor="passengers" required>
                 <input
                   type="number"
                   id="passengers"
@@ -303,8 +316,8 @@ export default function FlightDemo() {
 
               <div className="md:col-span-2 mt-4 pt-6 border-t border-slate-100">
                 <h3 className="font-display text-lg font-bold mb-4 text-slate-800">{t('flight.modal_passenger')}</h3>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <Field label={t('flight.passenger_name')} htmlFor="passengerName">
+                <div className="grid md:grid-cols-4 gap-4">
+                  <Field label={t('flight.passenger_name')} htmlFor="passengerName" required>
                     <input
                       id="passengerName"
                       name="passengerName"
@@ -315,7 +328,7 @@ export default function FlightDemo() {
                       placeholder={t('flight.passenger_name_placeholder')}
                     />
                   </Field>
-                  <Field label={t('flight.email')} htmlFor="email">
+                  <Field label={t('flight.email')} htmlFor="email" required>
                     <input
                       type="email"
                       id="email"
@@ -336,6 +349,16 @@ export default function FlightDemo() {
                       className="w-full bg-transparent outline-none font-bold text-slate-800 text-sm text-foreground"
                       placeholder="08X-XXX-XXXX"
                     />
+                  </Field>
+                  <Field 
+                    label={t('flight.modal_seat') || "Seat"} 
+                    onClick={() => setSeatMapOpen(true)}
+                  >
+                    <div className="py-0.5 select-none">
+                      <span className="font-bold text-slate-800 text-sm truncate block">
+                        {form.seat || (language === 'en' ? "Not selected" : "ยังไม่ได้เลือก")}
+                      </span>
+                    </div>
                   </Field>
                 </div>
               </div>
@@ -383,19 +406,32 @@ export default function FlightDemo() {
                   loading="lazy"
                   className="transition duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                <div className="absolute inset-0 p-6 flex flex-col justify-end text-white z-10 text-left">
+                {/* Full card dark overlay on hover */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-500 group-hover:opacity-80 z-10" />
+
+                {/* Expanding gradient overlay rising from the bottom */}
+                <div 
+                  className="absolute bottom-0 left-0 right-0 h-[40%] opacity-70 transition-all duration-500 ease-out group-hover:h-[85%] group-hover:opacity-80 z-10"
+                  style={{
+                    background: 'linear-gradient(to top, #000000 0%, rgba(0,0,0,0.98) 45%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,0) 100%)'
+                  }}
+                />
+
+                <div className="absolute inset-0 p-6 flex flex-col justify-end text-white z-20 text-left">
                   <p className="text-[10px] font-bold tracking-widest uppercase opacity-75">{x.label}</p>
                   <p className="mt-1.5 font-display text-xl font-bold tracking-tight">{x.t}</p>
-                  <p className="mt-2 text-xs text-white/70 line-clamp-2 leading-relaxed">{x.desc}</p>
-                  <div className="mt-4 flex items-end justify-between">
-                    <div>
-                      <p className="text-[10px] opacity-75">{t('flight.starting_price')}</p>
-                      <p className="font-display text-2xl font-black text-white">฿{x.p}</p>
+                  
+                  <div className="max-h-0 opacity-0 translate-y-4 group-hover:max-h-32 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out overflow-hidden">
+                    <p className="mt-2 text-xs text-white/70 line-clamp-2 leading-relaxed">{x.desc}</p>
+                    <div className="mt-4 flex items-end justify-between">
+                      <div>
+                        <p className="text-[10px] opacity-75">{t('flight.starting_price')}</p>
+                        <p className="font-display text-2xl font-black text-white">฿{x.p}</p>
+                      </div>
+                      <span className="rounded-full bg-white/20 backdrop-blur-md px-4 py-2 text-xs font-bold text-white border border-white/10 group-hover:bg-white/30 transition-colors">
+                        {t('flight.details')}
+                      </span>
                     </div>
-                    <span className="rounded-full bg-white/20 backdrop-blur-md px-4 py-2 text-xs font-bold text-white border border-white/10 group-hover:bg-white/30 transition-colors">
-                      {t('flight.details')}
-                    </span>
                   </div>
                 </div>
               </motion.article>
@@ -412,15 +448,24 @@ export default function FlightDemo() {
               <p className="text-sm text-slate-500 mt-3">{t('flight.about_subheading')}</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/40 shadow-sm hover:shadow-md hover:border-sky-500/20 transition-all duration-300">
+              <div className="group bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/40 shadow-sm hover:shadow-md hover:border-sky-500/20 transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-sky-50 text-sky-600 mb-4 border border-sky-100/50 group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
+                  <Luggage className="w-6 h-6" />
+                </div>
                 <h4 className="font-display font-bold text-slate-900 mb-2">{t('flight.service1_title')}</h4>
                 <p className="text-xs text-slate-500 leading-relaxed">{t('flight.service1_desc')}</p>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/40 shadow-sm hover:shadow-md hover:border-sky-500/20 transition-all duration-300">
+              <div className="group bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/40 shadow-sm hover:shadow-md hover:border-sky-500/20 transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-amber-50 text-amber-600 mb-4 border border-amber-100/50 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+                  <Coffee className="w-6 h-6" />
+                </div>
                 <h4 className="font-display font-bold text-slate-900 mb-2">{t('flight.service2_title')}</h4>
                 <p className="text-xs text-slate-500 leading-relaxed">{t('flight.service2_desc')}</p>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/40 shadow-sm hover:shadow-md hover:border-sky-500/20 transition-all duration-300">
+              <div className="group bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/40 shadow-sm hover:shadow-md hover:border-sky-500/20 transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-indigo-50 text-indigo-600 mb-4 border border-indigo-100/50 group-hover:scale-110 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300">
+                  <Mic className="w-6 h-6" />
+                </div>
                 <h4 className="font-display font-bold text-slate-900 mb-2">{t('flight.service3_title')}</h4>
                 <p className="text-xs text-slate-500 leading-relaxed">{t('flight.service3_desc')}</p>
               </div>
@@ -459,10 +504,20 @@ export default function FlightDemo() {
   );
 }
 
-function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
+function Field({ label, htmlFor, children, onClick, required }: { label: string; htmlFor?: string; children: React.ReactNode; onClick?: () => void; required?: boolean }) {
   return (
-    <div className="block rounded-2xl bg-slate-50/60 px-4 py-3.5 border border-slate-200/60 transition-all focus-within:border-sky-500 focus-within:bg-white focus-within:shadow-md focus-within:ring-2 focus-within:ring-sky-500/10">
-      <label htmlFor={htmlFor} className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block cursor-pointer">{label}</label>
+    <div 
+      onClick={onClick}
+      className={`block rounded-2xl bg-slate-50/60 px-4 py-3.5 border border-slate-200/60 transition-all ${
+        onClick 
+          ? "cursor-pointer hover:bg-white hover:border-sky-500 hover:shadow-md hover:ring-2 hover:ring-sky-500/10 active:scale-98" 
+          : "focus-within:border-sky-500 focus-within:bg-white focus-within:shadow-md focus-within:ring-2 focus-within:ring-sky-500/10"
+      }`}
+    >
+      <label htmlFor={htmlFor} className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block cursor-pointer select-none">
+        {label}
+        {required && <span className="text-rose-500 ml-1 font-bold">*</span>}
+      </label>
       <div className="mt-1">{children}</div>
     </div>
   );
@@ -492,78 +547,303 @@ function TicketModal({ booking, open, onClose }: { booking: any, open: boolean, 
     return city.split('(')[0].trim();
   };
 
+  // Generate stable flight number, seat number, and price based on passenger name hash
+  const passengerHash = booking.passengerName
+    ? booking.passengerName.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0)
+    : 123;
+  const flightNumber = `SN${(passengerHash % 899) + 100}`;
+  const seatRow = (passengerHash % 30) + 1;
+  const seatLetter = ['A', 'B', 'C', 'D', 'E', 'F'][passengerHash % 6];
+  const seatNumber = booking.seat || `${seatRow}${seatLetter}`;
+
+  const basePrice = booking.to.includes("เชียงใหม่") || booking.to.includes("ภูเก็ต") ? 890 : 990;
+  const totalPrice = basePrice * booking.passengers;
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-3xl sm:rounded-3xl border-slate-200 p-0 sm:max-w-md text-slate-800">
-        <div className="ticket-paper relative">
-          <div className="bg-sky-600 text-white p-6 flex justify-between items-center rounded-t-3xl">
-            <div className="font-display font-black text-2xl tracking-tight">BotnoiAir</div>
-            <div className="text-xs font-bold uppercase tracking-widest opacity-80">Boarding Pass</div>
-          </div>
-
-          <div className="p-8 pb-10 relative">
-            {/* Ticket cutouts */}
-            <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-6 h-6 bg-black/80 rounded-full z-10"></div>
-            <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-6 h-6 bg-black/80 rounded-full z-10"></div>
-
-            <div className="flex justify-between items-center mb-8 relative z-10">
-              <div className="text-center w-24">
-                <div className="text-3xl font-black font-display text-sky-600 tracking-tight">{getCode(booking.from)}</div>
-                <div className="text-[10px] text-slate-500 mt-1 truncate px-1">{getCleanCity(booking.from)}</div>
-              </div>
-
-              <div className="flex-1 flex flex-col items-center px-2 relative">
-                <div className="w-full h-px border-t border-dashed border-slate-200 absolute top-1/2 -translate-y-1/2"></div>
-                <div className="bg-white px-2 relative z-10 text-sky-600">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 3-3 3-3-1-2 1 4 4 1-2-1-3 3-3 3 6 1.2-.7a1.04 1.04 0 0 0 .6-1.1z" /></svg>
-                </div>
-              </div>
-
-              <div className="text-center w-24">
-                <div className="text-3xl font-black font-display text-sky-600 tracking-tight">{getCode(booking.to)}</div>
-                <div className="text-[10px] text-slate-500 mt-1 truncate px-1">{getCleanCity(booking.to)}</div>
-              </div>
+      <DialogContent className="max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-3xl sm:rounded-3xl border-none p-0 sm:max-w-md bg-[#eef6fc] text-slate-800 shadow-2xl">
+        <div className="p-8 relative select-none">
+          
+          {/* Header branding (Top center) */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-1.5">
+              <span className="font-display font-black text-lg text-sky-950 tracking-tight">BotnoiAir</span>
             </div>
-
-            <div className="grid grid-cols-2 gap-y-6 gap-x-4 mb-8 text-left">
-              <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold mb-0.5">{t('flight.modal_passenger')}</p>
-                <p className="font-bold text-sm truncate text-slate-800">{booking.passengerName}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold mb-0.5">Flight</p>
-                <p className="font-bold text-sm text-slate-800">SN{Math.floor(Math.random() * 899 + 100)}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold mb-0.5">{t('flight.modal_depart')}</p>
-                <p className="font-bold text-sm text-slate-800">{booking.departDate}</p>
-              </div>
-              {booking.tripType === "round" && booking.returnDate && (
-                <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-bold mb-0.5">{t('flight.modal_return')}</p>
-                  <p className="font-bold text-sm text-slate-800">{booking.returnDate}</p>
-                </div>
-              )}
-              <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold mb-0.5">{t('flight.modal_passengers_num')}</p>
-                <p className="font-bold text-sm text-slate-800">{booking.passengers}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold mb-0.5">{t('flight.modal_seat')}</p>
-                <p className="font-bold text-sm text-slate-800">{booking.seat || `${Math.floor(Math.random() * 30 + 1)}${['A', 'B', 'C', 'D', 'E', 'F'][Math.floor(Math.random() * 6)]}`}</p>
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-6 pt-6 border-t border-dashed border-slate-200 opacity-60">
-              <div className="h-10 w-full max-w-[280px]" style={{ background: "repeating-linear-gradient(95deg, #334155, #334155 2px, transparent 2px, transparent 4px, #334155 4px, #334155 6px, transparent 6px, transparent 10px, #334155 10px, #334155 14px, transparent 14px, transparent 16px)" }}></div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-sky-900/60 bg-sky-200/40 px-2.5 py-1 rounded-full">
+              Boarding Pass
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 border-t border-slate-100 text-center rounded-b-3xl">
-            <button onClick={onClose} id="confirm-ticket-modal" className="px-6 py-2 bg-slate-900 text-white font-bold text-xs rounded-full shadow-sm hover:scale-105 active:scale-98 transition-all cursor-pointer">
+          {/* CDG - FLR Route Display */}
+          <div className="flex justify-between items-end mb-1">
+            <div>
+              <div className="text-4xl font-black font-display text-sky-950 tracking-tight leading-none">{getCode(booking.from)}</div>
+              <div className="text-xs text-slate-500 font-medium mt-1.5">{getCleanCity(booking.from)}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-4xl font-black font-display text-sky-950 tracking-tight leading-none">{getCode(booking.to)}</div>
+              <div className="text-xs text-slate-500 font-medium mt-1.5">{getCleanCity(booking.to)}</div>
+            </div>
+          </div>
+
+          {/* Connection line with Plane icon */}
+          <div className="flex items-center w-full my-5 relative">
+            {/* Left dot */}
+            <div className="w-4 h-4 rounded-full bg-sky-200 flex items-center justify-center shrink-0">
+              <div className="w-1.5 h-1.5 rounded-full bg-sky-600"></div>
+            </div>
+            
+            {/* Left dashed line */}
+            <div className="flex-1 border-t-2 border-dashed border-sky-200/80 mx-2"></div>
+            
+            {/* Center rotated Plane icon */}
+            <div className="px-2 text-sky-950 shrink-0 transform rotate-45">
+              <Plane className="w-6 h-6 fill-sky-950 stroke-[1.5]" />
+            </div>
+            
+            {/* Right dashed line */}
+            <div className="flex-1 border-t-2 border-dashed border-sky-200/80 mx-2"></div>
+            
+            {/* Right dot */}
+            <div className="w-4 h-4 rounded-full bg-sky-200 flex items-center justify-center shrink-0">
+              <div className="w-1.5 h-1.5 rounded-full bg-sky-600"></div>
+            </div>
+          </div>
+
+          {/* Depart & Arrive details */}
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            <div className="text-left">
+              <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('flight.modal_depart')}</div>
+              <div className="font-extrabold text-sm text-slate-800 mt-0.5">{booking.departDate}</div>
+              <div className="text-[10px] text-slate-500 mt-0.5">10:30 AM</div>
+            </div>
+            <div className="text-center flex flex-col justify-center">
+              <div className="font-extrabold text-xs text-slate-700">{flightNumber}</div>
+              <div className="text-[10px] text-slate-400 font-medium mt-0.5">Non-stop</div>
+            </div>
+            <div className="text-right">
+              <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                {booking.tripType === "round" && booking.returnDate ? t('flight.modal_return') : "Arrive"}
+              </div>
+              <div className="font-extrabold text-sm text-slate-800 mt-0.5">
+                {booking.tripType === "round" && booking.returnDate ? booking.returnDate : booking.departDate}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-0.5">
+                12:15 PM
+              </div>
+            </div>
+          </div>
+
+          {/* Dashed separator */}
+          <div className="border-t border-dashed border-sky-200/80 my-5"></div>
+
+          {/* Passenger details grid */}
+          <div className="grid grid-cols-3 gap-y-4 gap-x-2 text-left mb-6">
+            <div className="col-span-2">
+              <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">{t('flight.modal_passenger')}</p>
+              <p className="font-bold text-sm text-slate-800 truncate pr-2">{booking.passengerName}</p>
+            </div>
+            <div>
+              <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">{t('flight.modal_seat')}</p>
+              <p className="font-bold text-sm text-slate-800">{seatNumber}</p>
+            </div>
+            
+            <div className="col-span-2">
+              <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Class / Status</p>
+              <p className="font-bold text-sm text-slate-800">Economy / Confirmed</p>
+            </div>
+            <div>
+              <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">{t('flight.modal_passengers_num')}</p>
+              <p className="font-bold text-sm text-slate-800">{booking.passengers}</p>
+            </div>
+          </div>
+
+          {/* Barcode and price */}
+          <div className="border-t border-dashed border-sky-200/80 pt-5 mt-5 flex justify-between items-center">
+            {/* Mock price */}
+            <div className="text-left">
+              <div className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Total Fare</div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-black text-sky-950">฿{totalPrice.toLocaleString()}</span>
+                <span className="text-[9px] text-slate-400">/{booking.passengers} pax</span>
+              </div>
+            </div>
+            
+            {/* Barcode mockup */}
+            <div className="h-9 w-32 opacity-80" style={{ background: "repeating-linear-gradient(95deg, #1e293b, #1e293b 2px, transparent 2px, transparent 4px, #1e293b 4px, #1e293b 6px, transparent 6px, transparent 10px, #1e293b 10px, #1e293b 14px, transparent 14px, transparent 16px)" }}></div>
+          </div>
+
+          {/* Close button at the bottom */}
+          <div className="mt-8 flex justify-center">
+            <button onClick={onClose} id="confirm-ticket-modal" className="w-full py-3 bg-sky-950 text-white font-bold text-xs rounded-2xl shadow-md hover:bg-sky-900 active:scale-98 transition-all cursor-pointer">
               {t('flight.modal_close')}
             </button>
           </div>
+
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface SeatMapModalProps {
+  open: boolean;
+  onClose: () => void;
+  selectedSeat: string;
+  onSelectSeat: (seat: string) => void;
+  fromCity: string;
+  toCity: string;
+}
+
+function SeatMapModal({ open, onClose, selectedSeat, onSelectSeat, fromCity, toCity }: SeatMapModalProps) {
+  const { language } = useTranslation();
+  const getCode = (city: string) => city.match(/\(([A-Z]{3})\)/)?.[1] || "N/A";
+  
+  // Static list of occupied seats
+  const OCCUPIED_SEATS = ["1B", "2E", "3A", "3F", "5D", "6B", "6C", "7A", "8F", "9C", "9D"];
+  
+  // Rows 1 to 10
+  const rows = Array.from({ length: 10 }, (_, i) => i + 1);
+  const leftCols = ["A", "B", "C"];
+  const rightCols = ["D", "E", "F"];
+
+  const handleSeatClick = (seatId: string) => {
+    if (OCCUPIED_SEATS.includes(seatId)) return;
+    onSelectSeat(seatId);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-3xl sm:rounded-3xl border-none p-0 sm:max-w-md bg-white text-slate-800 shadow-2xl">
+        <div className="p-6 relative select-none">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h3 className="font-display font-black text-xl text-sky-950 tracking-tight">
+              {language === 'en' ? "Select Seat" : "เลือกที่นั่งที่ชอบ"}
+            </h3>
+            <p className="text-xs text-slate-400 mt-1">
+              {getCode(fromCity)} → {getCode(toCity)}
+            </p>
+          </div>
+
+          {/* Seat Legend */}
+          <div className="flex justify-center gap-6 text-xs mb-6 bg-slate-50 py-3 rounded-2xl border border-slate-100">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-[#cbdcf7] border border-[#cbdcf7]"></div>
+              <span className="text-[#0f3460] font-medium">{language === 'en' ? "Available" : "ว่าง"}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center"><span className="text-[8px] text-slate-400 line-through">✕</span></div>
+              <span className="text-slate-400">{language === 'en' ? "Occupied" : "ไม่ว่าง"}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-[#0f3460] border border-[#0f3460]"></div>
+              <span className="text-[#0f3460] font-bold">{language === 'en' ? "Selected" : "เลือกอยู่"}</span>
+            </div>
+          </div>
+
+          {/* Airplane Seat Map Container */}
+          <div className="max-w-[340px] mx-auto bg-slate-50 border border-slate-100 rounded-3xl p-4 pt-8 relative overflow-hidden">
+            {/* Mock Cockpit at the top */}
+            <div className="w-32 h-10 border-t-2 border-x-2 border-slate-200 rounded-t-full mx-auto mb-6 flex items-center justify-center bg-white relative">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-200 absolute left-4 bottom-2"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-200 absolute right-4 bottom-2"></div>
+              <span className="text-[9px] font-bold text-slate-400 tracking-widest uppercase">COCKPIT</span>
+            </div>
+
+            {/* Cabin Seats Rows */}
+            <div className="space-y-3">
+              {rows.map((row) => (
+                <div key={row} className="grid grid-cols-7 gap-x-2 items-center text-center px-1">
+                  {/* Left seats A, B, C */}
+                  {leftCols.map((col) => {
+                    const seatId = `${row}${col}`;
+                    const isOccupied = OCCUPIED_SEATS.includes(seatId);
+                    const isSelected = selectedSeat === seatId;
+                    
+                    return (
+                      <button
+                        key={seatId}
+                        type="button"
+                        disabled={isOccupied}
+                        onClick={() => handleSeatClick(seatId)}
+                        className={`w-10 h-10 rounded-full text-[10px] font-bold border transition-all cursor-pointer flex items-center justify-center ${
+                          isOccupied
+                            ? "bg-slate-100 border-slate-200 text-slate-400/60 line-through cursor-not-allowed"
+                            : isSelected
+                            ? "bg-[#0f3460] border-[#0f3460] text-white font-extrabold shadow-md scale-105 shadow-[#0f3460]/20"
+                            : "bg-[#cbdcf7]/70 border-[#cbdcf7] text-[#0f3460] hover:bg-[#cbdcf7] hover:border-[#9abcee]"
+                        }`}
+                      >
+                        {seatId}
+                      </button>
+                    );
+                  })}
+
+                  {/* Aisle spacer */}
+                  <div className="w-4"></div>
+
+                  {/* Right seats D, E, F */}
+                  {rightCols.map((col) => {
+                    const seatId = `${row}${col}`;
+                    const isOccupied = OCCUPIED_SEATS.includes(seatId);
+                    const isSelected = selectedSeat === seatId;
+                    
+                    return (
+                      <button
+                        key={seatId}
+                        type="button"
+                        disabled={isOccupied}
+                        onClick={() => handleSeatClick(seatId)}
+                        className={`w-10 h-10 rounded-full text-[10px] font-bold border transition-all cursor-pointer flex items-center justify-center ${
+                          isOccupied
+                            ? "bg-slate-100 border-slate-200 text-slate-400/60 line-through cursor-not-allowed"
+                            : isSelected
+                            ? "bg-[#0f3460] border-[#0f3460] text-white font-extrabold shadow-md scale-105 shadow-[#0f3460]/20"
+                            : "bg-[#cbdcf7]/70 border-[#cbdcf7] text-[#0f3460] hover:bg-[#cbdcf7] hover:border-[#9abcee]"
+                        }`}
+                      >
+                        {seatId}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
+            {/* Exit indicators at the bottom */}
+            <div className="flex justify-between items-center mt-6 text-[9px] font-bold text-slate-400 px-4">
+              <span className="flex items-center gap-1">◀ EXIT</span>
+              <span className="flex items-center gap-1">EXIT ▶</span>
+            </div>
+          </div>
+
+          {/* Confirm Button */}
+          <div className="mt-8 flex flex-col gap-3">
+            {selectedSeat ? (
+              <div className="text-center text-xs text-[#0f3460] font-bold bg-[#cbdcf7]/30 border border-[#cbdcf7]/40 py-2.5 rounded-2xl">
+                {language === 'en' ? `Selected Seat: ${selectedSeat}` : `ที่นั่งที่เลือก: ${selectedSeat}`}
+              </div>
+            ) : (
+              <div className="text-center text-xs text-rose-600 font-bold bg-rose-50 border border-rose-200/50 py-2.5 rounded-2xl">
+                {language === 'en' ? "Please select a seat" : "โปรดเลือกที่นั่งก่อนยืนยัน"}
+              </div>
+            )}
+            
+            <button
+              type="button"
+              disabled={!selectedSeat}
+              onClick={onClose}
+              className={`w-full py-3.5 font-display font-bold text-xs rounded-2xl shadow-md transition-all cursor-pointer ${
+                selectedSeat
+                  ? "bg-[#0f3460] hover:bg-[#0c2a50] text-white hover:shadow-lg active:scale-98"
+                  : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
+              }`}
+            >
+              {language === 'en' ? "Confirm Seat" : "ยืนยันการเลือกที่นั่ง"}
+            </button>
+          </div>
+
         </div>
       </DialogContent>
     </Dialog>

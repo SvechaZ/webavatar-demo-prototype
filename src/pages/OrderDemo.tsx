@@ -1,50 +1,33 @@
-import {
-  Check,
-  ChevronRight,
-  Minus,
-  Plus,
-  ReceiptText,
-  ShoppingBag,
-  Trash2,
-  UtensilsCrossed,
-} from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/LanguageContext";
-import PageSkeleton from "@/components/PageSkeleton";
-import SkeletonImage from "@/components/SkeletonImage";
-
-import botnoiLogo from "@/assets/BOTNOI-Restaurant-logo.png";
-import greenCurryImage from "@/assets/green-curry.jpg";
-import mangoStickyRiceImage from "@/assets/mango-sticky-rice.jpg";
-import padKrapaoImage from "@/assets/pad-krapao.jpg";
-import tomYumImage from "@/assets/tom-yum.jpg";
-import friedriceImage from "@/assets/fried-rice.jpg";
-import tomyumnoodleImage from "@/assets/tomyum-noodle.jpg";
-
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Check,
+  ChevronRight,
+  ChevronDown,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  UtensilsCrossed,
+  Calendar,
+  Plane,
+  BedDouble,
+  Search,
+  Sliders,
+  Sparkles,
+  FolderOpen,
+  CheckCircle,
+  FileCheck,
+  AlertCircle,
+  Menu
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { toast, Toaster } from "sonner";
 
-export interface MenuItem {
-  id: string;
-  name: string;
-  englishName: string;
-  description: string;
-  category: "เมนูยอดนิยม" | "อาหารจานเดียว" | "กับข้าว" | "ของหวาน";
-  price: number;
-  image: string;
-  spicy?: boolean;
-}
-
-export type Cart = Record<string, number>;
-
+// Receipt Interface exported for Admin page compliance
 export interface Receipt {
   orderId: string;
   orderedAt: string;
@@ -54,568 +37,1240 @@ export interface Receipt {
   total: number;
 }
 
-const menu: MenuItem[] = [
-  {
-    id: "krapao",
-    name: "ข้าวกะเพราไก่ไข่ดาว",
-    englishName: "Chicken Pad Kra Pao",
-    description: "กะเพราหอมฉุน ผัดไฟแรง เสิร์ฟพร้อมไข่ดาวกรอบ",
-    category: "เมนูยอดนิยม",
-    price: 89,
-    image: padKrapaoImage,
-    spicy: true,
-  },
-  {
-    id: "tomyum",
-    name: "ต้มยำกุ้งน้ำข้น",
-    englishName: "Creamy Tom Yum Goong",
-    description: "กุ้งสดตัวโต น้ำซุปเข้มข้น หอมสมุนไพรไทย",
-    category: "เมนูยอดนิยม",
-    price: 179,
-    image: tomYumImage,
-    spicy: true,
-  },
-  {
-    id: "green-curry",
-    name: "แกงเขียวหวานไก่",
-    englishName: "Green Curry Chicken",
-    description: "เครื่องแกงตำสด กะทิหอมมัน พร้อมข้าวสวย",
-    category: "กับข้าว",
-    price: 149,
-    image: greenCurryImage,
-    spicy: true,
-  },
-  {
-    id: "mango-rice",
-    name: "ข้าวเหนียวมะม่วง",
-    englishName: "Mango Sticky Rice",
-    description: "มะม่วงสุกหวาน ข้าวเหนียวมูนราดกะทิสด",
-    category: "ของหวาน",
-    price: 119,
-    image: mangoStickyRiceImage,
-  },
-  {
-    id: "fried-rice",
-    name: "ข้าวผัดกุ้ง",
-    englishName: "Shrimp Fried Rice",
-    description: "ข้าวหอมมะลิผัดหอมกระทะ กุ้งสดและผักกรอบ",
-    category: "อาหารจานเดียว",
-    price: 109,
-    image: friedriceImage,
-  },
-  {
-    id: "tomyum-noodle",
-    name: "ก๋วยเตี๋ยวต้มยำ",
-    englishName: "Tom Yum Noodles",
-    description: "เส้นนุ่ม น้ำต้มยำรสจัดจ้าน ถั่วคั่วหอม",
-    category: "อาหารจานเดียว",
-    price: 79,
-    image: tomyumnoodleImage,
-    spicy: true,
-  },
+// 20 Houses Mock DB with specified Project Types
+export interface HouseItem {
+  id: number;
+  code: string;
+  name: string;
+  style: string;
+  type: "accommodation" | "flight" | "restaurant" | "ecommerce";
+  color: string;
+  basePrice: number;
+  progress: number;
+}
+
+const projectData: HouseItem[] = [
+  { id: 1, code: 'TN01', name: '01-the-chill-crew', style: 'Modern Minimalist', type: 'accommodation', color: '#6366F1', basePrice: 1800000, progress: 85 },
+  { id: 2, code: 'TN02', name: '02-cozy-oracles', style: 'Neo-Classical', type: 'flight', color: '#b45309', basePrice: 4200000, progress: 45 },
+  { id: 3, code: 'TN03', name: '03-controller-kings', style: 'Nordic Timber', type: 'ecommerce', color: '#059669', basePrice: 2100000, progress: 90 },
+  { id: 4, code: 'TN04', name: '04-the-netflix-hermits', style: 'Brutalist Concrete', type: 'ecommerce', color: '#1e293b', basePrice: 3100000, progress: 10 },
+  { id: 5, code: 'TN05', name: '05-aesthetic-dreamers', style: 'Cozy Wood Cabin', type: 'accommodation', color: '#78350f', basePrice: 1500000, progress: 100 },
+  { id: 6, code: 'TN06', name: '06-lo-fi-homebodies', style: 'Glass Contemporary', type: 'flight', color: '#0284c7', basePrice: 2900000, progress: 60 },
+  { id: 7, code: 'TN07', name: '07-steak-game-bros', style: 'Organic Earth Dome', type: 'restaurant', color: '#10B981', basePrice: 1200000, progress: 80 },
+  { id: 8, code: 'TN08', name: '08-vibe-architects', style: 'Industrial Brickwork', type: 'ecommerce', color: '#991b1b', basePrice: 2500000, progress: 75 },
+  { id: 9, code: 'TN09', name: '09-sunset-superfans', style: 'Japanese Zen', type: 'accommodation', color: '#16a34a', basePrice: 1900000, progress: 100 },
+  { id: 10, code: 'TN10', name: '10-lazy-mermaids', style: 'Modular Container', type: 'flight', color: '#ca8a04', basePrice: 1400000, progress: 30 },
+  { id: 11, code: 'TN11', name: '11-the-sharp-cuts', style: 'Mid-Century Gable', type: 'restaurant', color: '#475569', basePrice: 2350000, progress: 5 },
+  { id: 12, code: 'TN12', name: '12-coastal-avengers', style: 'Tropical Canopy', type: 'ecommerce', color: '#0d9488', basePrice: 3800000, progress: 95 },
+  { id: 13, code: 'TN13', name: '13-the-dungeon-masters', style: 'Step Architecture', type: 'accommodation', color: '#4338ca', basePrice: 4700000, progress: 55 },
+  { id: 14, code: 'TN14', name: '14-the-all-rounders', style: 'Atrium Courtyard', type: 'flight', color: '#db2777', basePrice: 3200000, progress: 100 },
+  { id: 15, code: 'TN15', name: '15-mountain-mode', style: 'Flat-Roof Minimal', type: 'restaurant', color: '#0f172a', basePrice: 2700000, progress: 15 },
+  { id: 16, code: 'TN16', name: '16-blue-hour-society', style: 'Modern Steel Frame', type: 'ecommerce', color: '#334155', basePrice: 2900000, progress: 70 },
+  { id: 17, code: 'TN17', name: '17-midnight-raiders', style: 'Spanish Terracotta', type: 'accommodation', color: '#c2410c', basePrice: 3100000, progress: 80 },
+  { id: 18, code: 'TN18', name: '18-indie-mountain-kids', style: 'Parametric Fluid', type: 'flight', color: '#06b6d4', basePrice: 5500000, progress: 0 },
+  { id: 19, code: 'TN19', name: '19-ocean-avengers', style: 'Victorian Restoration', type: 'restaurant', color: '#6d28d9', basePrice: 3600000, progress: 100 },
+  { id: 20, code: 'TN20', name: '20-final-boss-crew', style: 'Waterfront Living', type: 'ecommerce', color: '#0369a1', basePrice: 2200000, progress: 40 }
 ];
 
-const categories = ["ทั้งหมด", "เมนูยอดนิยม", "อาหารจานเดียว", "กับข้าว", "ของหวาน"] as const;
-const money = new Intl.NumberFormat("th-TH", {
-  style: "currency",
-  currency: "THB",
-  maximumFractionDigits: 0,
-});
-const CART_KEY = "botnoi-restaurant-cart";
-const RECEIPT_KEY = "botnoi-restaurant-last-receipt";
+// Kanban Database
+interface KanbanTask {
+  id: number;
+  titleTh: string;
+  titleEn: string;
+  level: "High" | "Medium" | "Low";
+  daysTh: string;
+  daysEn: string;
+}
+
+const tasksDatabase: Record<string, KanbanTask[]> = {
+  todo: [
+    { id: 101, titleTh: "สำรวจพื้นที่หน้างานและเจาะชั้นดินฐานราก", titleEn: "Site Survey & Soil Test Drilling", level: "High", daysTh: "3 วัน", daysEn: "3 days" },
+    { id: 102, titleTh: "ตรวจเช็กและอนุมัติแบบวิศวกรรมโครงสร้างคานหลัก", titleEn: "Verify & Approve Structural Beam Blueprint", level: "Medium", daysTh: "5 วัน", daysEn: "5 days" },
+    { id: 103, titleTh: "ส่งรายการวัสดุเสริมเหล็กและปริมาณคอนกรีต", titleEn: "Submit Steel & Concrete Material Take-off", level: "Low", daysTh: "2 วัน", daysEn: "2 days" },
+  ],
+  progress: [
+    { id: 201, titleTh: "ดำเนินการขุดดินเทคอนกรีตฐานรากสเต็ปแรก", titleEn: "Pouring Concrete Foundation Level 1", level: "High", daysTh: "กำลังทำ", daysEn: "In Progress" },
+    { id: 202, titleTh: "จัดทำแบบหล่อและเชื่อมโครงเหล็กข้ออ้อย", titleEn: "Welding & Rebar Reinforcement Framing", level: "Medium", daysTh: "กำลังทำ", daysEn: "In Progress" },
+  ],
+  review: [
+    { id: 301, titleTh: "ส่งรายงานผลกำลังอัดคอนกรีต 28 วัน", titleEn: "Review Concrete 28-day Compressive Strength", level: "High", daysTh: "ส่งตรวจ", daysEn: "Under Review" },
+    { id: 302, titleTh: "ตรวจสอบระดับแนวดิ่งและมุมแนวเสาหลักด้วยกล้องไลก้า", titleEn: "Audit Vertical Pillar Alignment using Leica Leica", level: "Low", daysTh: "ส่งตรวจ", daysEn: "Under Review" },
+  ],
+  done: [
+    { id: 401, titleTh: "ลงนามอนุมัติผังเขตสิทธิ์การก่อสร้างโดยวิศวกรควบคุม", titleEn: "Sign & Authorize Site Boundary Authorization", level: "Medium", daysTh: "เสร็จสิ้น", daysEn: "Completed" },
+    { id: 402, titleTh: "เตรียมพื้นที่เทตอม่อชั่วคราวและลงเสาเข็มทดสอบ", titleEn: "Complete Test Pile Loading & Area Leveling", level: "Low", daysTh: "เสร็จสิ้น", daysEn: "Completed" }
+  ]
+};
+
+// Menu items for Restaurant Demo
+export interface MenuItem {
+  id: string;
+  name: string;
+  nameTh: string;
+  nameEn: string;
+  descTh: string;
+  descEn: string;
+  price: number;
+  category: string;
+}
+
+const foodMenu: MenuItem[] = [
+  { id: "padkrapao", name: "ข้าวกะเพราออร์แกนิกไข่ดาว", nameTh: "ข้าวกะเพราออร์แกนิกไข่ดาว", nameEn: "Organic Chicken Krapao with Fried Egg", descTh: "กะเพราป่าเก็บสดใบหอม ผัดไฟแรงพร้อมเนื้อไก่ออร์แกนิกและไข่ดาวเป็ดไล่ทุ่ง", descEn: "Stir-fried organic chicken with hot basil, served with a crispy farm egg over rice.", price: 99, category: "จานเดี่ยว" },
+  { id: "tomyum", name: "ต้มยำกุ้งแม่น้ำน้ำข้น", nameTh: "ต้มยำกุ้งแม่น้ำน้ำข้น", nameEn: "Creamy Tom Yum River Prawn", descTh: "กุ้งแม่น้ำตัวใหญ่ในน้ำซุปสมุนไพรสดข้นคลัก พริกเผาปรุงสูตรลับเฉพาะ", descEn: "Creamy, spicy and sour broth infused with local herbs and premium giant prawns.", price: 199, category: "เมนูยอดนิยม" },
+  { id: "greencurry", name: "แกงเขียวหวานไก่บ้านยอดมะพร้าว", nameTh: "แกงเขียวหวานไก่บ้านยอดมะพร้าว", nameEn: "Green Curry Chicken with Coconut Shoots", descTh: "พริกแกงตำสดหอมกลิ่นเครื่องเทศ แกงกะทิคั้นมือคู่มะพร้าวอ่อนกรอบ", descEn: "House-made curry paste simmered with free-range chicken and sweet coconut shoots.", price: 159, category: "กับข้าว" },
+  { id: "mangosticky", name: "ข้าวเหนียวมะม่วงน้ำดอกไม้", nameTh: "ข้าวเหนียวมะม่วงน้ำดอกไม้", nameEn: "Mango Sticky Rice", descTh: "มะม่วงน้ำดอกไม้สุกหวานฉ่ำ เสิร์ฟพร้อมข้าวเหนียวมูนกะทิข้นสดใบเตย", descEn: "Sweet ripe mango served with premium coconut-dressed sticky rice.", price: 129, category: "ของหวาน" },
+];
 
 export default function OrderDemo() {
-  const { t, language } = useTranslation();
-  const [category, setCategory] = useState<(typeof categories)[number]>("ทั้งหมด");
-  const [cart, setCart] = useState<Cart>({});
-  const [receipt, setReceipt] = useState<Receipt | null>(null);
-  const [receiptOpen, setReceiptOpen] = useState(false);
-  const [ready, setReady] = useState(false);
-  const cartRef = useRef<HTMLElement>(null);
+  const { language } = useTranslation();
+  const [activeHouseId, setActiveHouseId] = useState<number>(7); // Default to House 7 (07-steak-game-bros)
+  const [activeTab, setActiveTab] = useState<"kanban" | "demo">("demo");
+  const [demoRole, setDemoRole] = useState<string>("customer");
+  const [sprint, setSprint] = useState<number>(1);
+  const [cart, setCart] = useState<Record<string, number>>({});
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
 
-  const getCategoryLabel = (cat: string) => {
-    switch (cat) {
-      case "ทั้งหมด": return t("food.category_all");
-      case "เมนูยอดนิยม": return t("food.category_popular");
-      case "อาหารจานเดียว": return t("food.category_single");
-      case "กับข้าว": return t("food.category_dishes");
-      case "ของหวาน": return t("food.category_dessert");
-      default: return cat;
+  // Accommodation demo states
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState(1);
+  const [roomType, setRoomType] = useState("Deluxe Cabin");
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
+
+  // Flight demo states
+  const [fromCity, setFromCity] = useState("Bangkok (DMK)");
+  const [toCity, setToCity] = useState("Chiang Mai (CNX)");
+  const [departDate, setDepartDate] = useState("");
+  const [flightConfirmed, setFlightConfirmed] = useState(false);
+
+  // E-Commerce demo states
+  const [shopCart, setShopCart] = useState<Record<string, number>>({});
+  const [ecommerceConfirmed, setEcommerceConfirmed] = useState(false);
+
+  // General checkout modal states
+  const [restaurantConfirmed, setRestaurantConfirmed] = useState(false);
+
+  // Helper for formatted Thai currency
+  const money = (num: number) => {
+    return new Intl.NumberFormat("th-TH", {
+      style: "currency",
+      currency: "THB",
+      maximumFractionDigits: 0
+    }).format(num);
+  };
+
+  const activeHouse = useMemo(() => {
+    return projectData.find(h => h.id === activeHouseId) || projectData[6];
+  }, [activeHouseId]);
+
+  const activeTypeLabel = (type: string) => {
+    if (language === 'en') {
+      switch (type) {
+        case "accommodation": return "Resort Booking";
+        case "flight": return "Flight Ticket Booking";
+        case "restaurant": return "Room Service Dining";
+        case "ecommerce": return "Smart Home E-Store";
+        default: return type;
+      }
+    } else {
+      switch (type) {
+        case "accommodation": return "จองที่พักรีสอร์ต";
+        case "flight": return "จองตั๋วเครื่องบิน";
+        case "restaurant": return "สั่งอาหารรูมเซอร์วิส";
+        case "ecommerce": return "ร้านค้าสินค้าไอที";
+        default: return type;
+      }
     }
   };
 
+  // Toast notifications for actions
+  const triggerToast = (msg: string) => {
+    toast.success(msg);
+  };
+
+  // Reset demo states when house changes
   useEffect(() => {
-    try {
-      const savedCart = window.localStorage.getItem(CART_KEY);
-      const savedReceipt = window.localStorage.getItem(RECEIPT_KEY);
-      if (savedCart) setCart(JSON.parse(savedCart) as Cart);
-      if (savedReceipt) setReceipt(JSON.parse(savedReceipt) as Receipt);
-    } catch {
-      window.localStorage.removeItem(CART_KEY);
+    setCart({});
+    setShopCart({});
+    setBookingConfirmed(false);
+    setFlightConfirmed(false);
+    setEcommerceConfirmed(false);
+    setRestaurantConfirmed(false);
+  }, [activeHouseId]);
+
+  // Lock body scroll at root document level to prevent outer browser scrolling
+  useEffect(() => {
+    if (activeHouseId === 7 && activeTab === "demo") {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     }
-    setReady(true);
-  }, []);
 
-  useEffect(() => {
-    if (ready) window.localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  }, [cart, ready]);
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [activeHouseId, activeTab]);
 
-  const visibleMenu =
-    category === "ทั้งหมด" ? menu : menu.filter((item) => item.category === category);
-  const cartItems = useMemo(
-    () =>
-      menu
-        .filter((item) => (cart[item.id] ?? 0) > 0)
-        .map((item) => ({ ...item, quantity: cart[item.id] ?? 0 })),
-    [cart],
-  );
-  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const serviceFee = subtotal > 0 ? 10 : 0;
-
-  const changeQuantity = (id: string, amount: number) => {
-    setCart((current) => {
-      const nextQuantity = Math.max(0, (current[id] ?? 0) + amount);
-      const next = { ...current, [id]: nextQuantity };
-      if (nextQuantity === 0) delete next[id];
+  // Restaurant ordering actions
+  const changeFoodQty = (id: string, amt: number) => {
+    setCart(prev => {
+      const val = (prev[id] || 0) + amt;
+      const next = { ...prev, [id]: val };
+      if (val <= 0) delete next[id];
       return next;
     });
   };
 
-  const checkout = () => {
-    if (cartItems.length === 0) return;
-    const nextReceipt: Receipt = {
-      orderId: `BN${Date.now().toString().slice(-6)}`,
-      orderedAt: new Date().toLocaleString(language === 'en' ? 'en-US' : 'th-TH', { dateStyle: "medium", timeStyle: "short" }),
-      items: cartItems.map(item => {
-        const transId = item.id.replace("-", "");
-        return {
-          ...item,
-          name: language === 'en' ? (t(`food_item.${transId}.name` as any) || item.englishName) : item.name
-        };
-      }),
-      subtotal,
-      serviceFee,
-      total: subtotal + serviceFee,
-    };
-    window.localStorage.setItem(RECEIPT_KEY, JSON.stringify(nextReceipt));
-    try {
-      const savedOrders = window.localStorage.getItem("botnoi-restaurant-orders");
-      const orders = savedOrders ? JSON.parse(savedOrders) : [];
-      orders.unshift(nextReceipt);
-      window.localStorage.setItem("botnoi-restaurant-orders", JSON.stringify(orders));
-    } catch (e) {
-      console.error(e);
-    }
-    setReceipt(nextReceipt);
-    setCart({});
-    setReceiptOpen(true);
+  const cartTotal = useMemo(() => {
+    return foodMenu.reduce((sum, item) => sum + item.price * (cart[item.id] || 0), 0);
+  }, [cart]);
+
+  // Smart Home E-Commerce items
+  const techProducts = [
+    { id: "bulb", nameTh: "หลอดไฟเปลี่ยนสีอัจฉริยะ", nameEn: "Smart RGB Dome Bulb", price: 490 },
+    { id: "sensor", nameTh: "เซ็นเซอร์จับความชื้นในโดม", nameEn: "Eco Dome Humidity Sensor", price: 850 },
+    { id: "lock", nameTh: "กลอนประตูสแกนลายนิ้วมือ", nameEn: "Biometric Smart Door Lock", price: 3200 },
+    { id: "speaker", nameTh: "ลำโพงสั่งการผู้ช่วยอัจฉริยะ", nameEn: "Voice Assistant Smart Speaker", price: 1500 }
+  ];
+
+  const changeTechQty = (id: string, amt: number) => {
+    setShopCart(prev => {
+      const val = (prev[id] || 0) + amt;
+      const next = { ...prev, [id]: val };
+      if (val <= 0) delete next[id];
+      return next;
+    });
   };
 
+  const shopTotal = useMemo(() => {
+    return techProducts.reduce((sum, item) => sum + item.price * (shopCart[item.id] || 0), 0);
+  }, [shopCart]);
+
   return (
-    <>
-      <AnimatePresence>
-        {!ready && <PageSkeleton variant="order" />}
-      </AnimatePresence>
-      <div className="order-theme min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground page-grid">
-      <header className="relative z-20 border-b border-stone-200 bg-stone-50/50">
-        <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
-          <Link to="/food-demo" className="flex items-center gap-2.5">
-            <img src={botnoiLogo} alt="Botnoi Restaurant" className="h-10 w-auto object-contain" />
-          </Link>
-          <nav className="flex items-center gap-4 text-sm font-semibold tracking-wide">
-            {receipt && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setReceiptOpen(true)} 
-                className="text-stone-600 hover:text-stone-900 gap-1.5 font-bold hover:bg-stone-100/50 rounded-full px-3 py-1.5"
-              >
-                <ReceiptText className="size-4" /> <span>{t("food.nav_receipt")}</span>
-              </Button>
-            )}
-            <Link 
-              to="/food-demo/admin" 
-              className="px-4 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 transition-all border border-stone-200 text-stone-700 text-xs font-bold" 
-              id="nav-order-admin"
-            >
-              {t("food.nav_admin")}
-            </Link>
-            <Button
-              variant="restaurant"
-              size="restaurant"
-              onClick={() =>
-                cartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-              }
-              className="gap-2 cursor-pointer font-bold"
-            >
-              <ShoppingBag className="size-4" /> {language === 'en' ? 'Cart' : 'ตะกร้า'}{" "}
-              <span className="rounded-full bg-white px-2 py-0.5 text-xs text-emerald-600 font-extrabold ml-1 shadow-sm">
-                {itemCount}
-              </span>
-            </Button>
-          </nav>
-        </div>
-      </header>
+    <div className="order-theme bg-background text-foreground font-sans leading-relaxed selection:bg-sky-600 selection:text-white flex h-screen w-screen overflow-hidden pb-0">
+      <Toaster position="top-center" richColors />
 
-      <div
-        className="mx-auto w-full max-w-7xl overflow-hidden px-4 py-8 pb-32 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_370px] lg:gap-8 lg:px-8 lg:pb-12"
-      >
-        <section aria-labelledby="menu-heading" className="min-w-0 overflow-hidden">
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
-                {language === 'en' ? 'Select delicious food' : 'เลือกความอร่อย'}
-              </p>
-              <h2 id="menu-heading" className="font-display text-3xl font-extrabold text-stone-900 tracking-tight">
-                {language === 'en' ? 'Our Menu' : 'เมนูของทางร้าน'}
-              </h2>
+      {/* LEFT SIDEBAR */}
+      <aside className={`${sidebarCollapsed ? "w-0 border-r-0" : "w-64 border-r border-stone-200"} bg-stone-50 flex flex-col justify-between h-screen shrink-0 transition-all duration-300 overflow-hidden z-50`}>
+          <div className="p-4 border-b border-stone-200 flex items-center justify-between bg-white shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+              <span className="font-black text-stone-800 text-sm tracking-tight">TN House Portal</span>
             </div>
-            <p className="text-xs text-stone-500 font-bold">
-              {visibleMenu.length} {language === 'en' ? 'items' : 'รายการ'}
-            </p>
+            <button
+              onClick={() => setSidebarCollapsed(true)}
+              className="p-1 hover:bg-stone-100 rounded text-stone-400 hover:text-stone-600 transition-colors cursor-pointer"
+              title={language === 'en' ? "Close menu" : "ปิดเมนู"}
+            >
+              <ChevronRight className="size-4 rotate-180" />
+            </button>
           </div>
-          
-          {/* Categories select tabs with sliding motion pill */}
-          <div
-            className="mb-8 flex gap-2 overflow-x-auto whitespace-nowrap pb-3 -mx-4 px-4 scrollbar-hide snap-x"
-            role="tablist"
-            aria-label={language === 'en' ? 'Food Categories' : 'หมวดหมู่อาหาร'}
-          >
-            {categories.map((item) => {
-              const active = category === item;
-              return (
+
+          <div className="flex-1 overflow-y-auto py-4 space-y-6">
+            {/* A. Project Selector */}
+            <div className="px-4">
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2 font-mono">
+                {language === 'en' ? 'Project Selection' : 'เลือกโครงการ'}
+              </span>
+              <div className="relative" id="project-dropdown-container">
                 <button
-                  key={item}
-                  className={`relative shrink-0 snap-start px-5 py-2.5 rounded-full text-xs font-bold transition-colors cursor-pointer border ${
-                    active 
-                      ? "text-emerald-700 border-emerald-500/20" 
-                      : "text-stone-500 border-stone-200 hover:text-stone-800 hover:bg-stone-50"
-                  }`}
-                  onClick={() => setCategory(item)}
-                  role="tab"
-                  aria-selected={active}
-                  aria-label={language === 'en' ? `Select category: ${getCategoryLabel(item)}` : `เลือกหมวดหมู่อาหาร: ${item}`}
+                  onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
+                  className="w-full flex items-center bg-white border border-stone-200 hover:border-stone-300 rounded-xl px-3 py-2.5 shadow-sm text-left cursor-pointer transition-colors"
+                  id="house-selector-sidebar-trigger"
                 >
-                  <span className="relative z-10">{getCategoryLabel(item)}</span>
-                  {active && (
-                    <motion.div
-                      layoutId="activeCategoryPill"
-                      className="absolute inset-0 bg-emerald-50 rounded-full"
-                      transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-                    />
-                  )}
+                  <Search className="size-4 text-stone-400 mr-2 shrink-0" />
+                  <span className="text-xs text-stone-800 font-extrabold flex-1 truncate">
+                    {activeHouse.code} - {activeHouse.name}
+                  </span>
+                  <ChevronDown className={`size-3 text-stone-400 transition-transform ${projectDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
-              );
-            })}
-          </div>
 
-          {/* Menu items display with staggered entry */}
-          <motion.div 
-            className="grid gap-6 sm:grid-cols-2"
-          >
-            <AnimatePresence>
-              {visibleMenu.map((item) => {
-                const quantity = cart[item.id] ?? 0;
-                const translationId = item.id.replace("-", "");
-                const name = language === 'en' ? (t(`food_item.${translationId}.name` as any) || item.englishName) : item.name;
-                const description = t(`food_item.${translationId}.desc` as any) || item.description;
-
-                return (
-                  <motion.article
-                    key={item.id}
-                    className="card-lift group flex w-full min-w-0 overflow-hidden rounded-3xl border border-stone-200/80 bg-white flex-row sm:flex-col"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    whileHover={{ y: -4 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="relative w-28 shrink-0 aspect-square overflow-hidden bg-stone-100 sm:w-full sm:aspect-[6/4]">
-                      <SkeletonImage
-                        src={item.image}
-                        alt={name}
-                        loading="lazy"
-                        wrapperClassName="absolute inset-0"
-                        className="transition-transform duration-500 group-hover:scale-102"
-                      />
-                      {item.spicy && (
-                        <span className="absolute left-2 top-2 sm:left-3 sm:top-3 rounded-full bg-white/95 px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-extrabold text-red-600 backdrop-blur shadow-sm border border-red-100">
-                          {t("food.spicy_tag")}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-5 overflow-hidden justify-between">
-                      <div>
-                        <p className="truncate text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-600">
-                          {item.englishName}
-                        </p>
-                        <h3 className="mt-0.5 sm:mt-1 truncate font-display text-lg sm:text-xl font-bold leading-tight text-stone-900 tracking-tight">{name}</h3>
-                        <p className="mt-1 sm:mt-2 min-h-0 sm:min-h-11 text-xs sm:text-sm leading-relaxed sm:leading-6 text-stone-500 line-clamp-2">
-                          {description}
-                        </p>
-                      </div>
-                      
-                      <div className="pt-3 sm:pt-4 flex items-center justify-between gap-2 border-t border-stone-100/50 mt-4">
-                        <p className="truncate font-display text-lg sm:text-xl font-bold text-stone-950">
-                          {money.format(item.price)}
-                        </p>
-                        {quantity === 0 ? (
-                          <Button
-                            variant="restaurant"
-                            size="restaurantIcon"
-                            className="size-8 sm:size-10 shrink-0 cursor-pointer"
-                            onClick={() => changeQuantity(item.id, 1)}
-                            aria-label={language === 'en' ? `Add ${name} to cart` : `เพิ่ม ${name} ลงตะกร้า`}
-                            id={`add-${item.id}`}
+                {projectDropdownOpen && (
+                  <>
+                    {/* Transparent overlay to close dropdown */}
+                    <div 
+                      className="fixed inset-0 z-40 bg-transparent" 
+                      onClick={() => setProjectDropdownOpen(false)} 
+                    />
+                    
+                    {/* Dropdown Popover */}
+                    <div className="absolute left-0 right-0 mt-1.5 bg-white border border-stone-200 rounded-2xl shadow-xl z-50 max-h-72 overflow-y-auto p-1.5 space-y-0.5 no-scrollbar scroll-smooth">
+                      {projectData.map((house) => {
+                        const isSelected = house.id === activeHouseId;
+                        return (
+                          <button
+                            key={house.id}
+                            onClick={() => {
+                              setActiveHouseId(house.id);
+                              setProjectDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-between ${
+                              isSelected
+                                ? "bg-sky-50 text-sky-800"
+                                : "text-stone-700 hover:bg-stone-50 hover:text-stone-900"
+                            }`}
                           >
-                            <Plus className="size-4 sm:size-5" />
-                          </Button>
-                        ) : (
-                          <div className="flex shrink-0 items-center gap-1 rounded-full border border-stone-200 bg-stone-100 p-0.5 sm:p-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="size-6 sm:size-8 rounded-full"
-                              onClick={() => changeQuantity(item.id, -1)}
-                              aria-label={language === 'en' ? `Decrease quantity of ${name} by 1` : `ลดจำนวน ${name} ลง 1`}
-                              id={`decrease-${item.id}`}
-                            >
-                              <Minus className="size-3 sm:size-4" />
-                            </Button>
-                            <span className="w-5 sm:w-6 text-center text-xs sm:text-sm font-extrabold text-stone-800" id={`quantity-${item.id}`}>{quantity}</span>
-                            <Button
-                              variant="restaurant"
-                              size="icon"
-                              className="size-6 sm:size-8 rounded-full cursor-pointer"
-                              onClick={() => changeQuantity(item.id, 1)}
-                              aria-label={language === 'en' ? `Increase quantity of ${name} by 1` : `เพิ่มจำนวน ${name} อีก 1`}
-                              id={`increase-${item.id}`}
-                            >
-                              <Plus className="size-3 sm:size-4" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
+                            <span className="truncate">{house.code} - {house.name}</span>
+                            {isSelected && <Check className="size-3 text-sky-600 shrink-0" />}
+                          </button>
+                        );
+                      })}
                     </div>
-                  </motion.article>
-                );
-              })}
-            </AnimatePresence>
-          </motion.div>
-        </section>
-
-        {/* Sidebar Shopping Cart overlay */}
-        <aside
-          ref={cartRef}
-          className="mt-12 lg:mt-0 scroll-mt-24 self-start rounded-3xl border border-stone-200 bg-white p-5 shadow-lg lg:sticky lg:top-24 w-full"
-          aria-labelledby="cart-heading"
-        >
-          <div className="flex items-center justify-between border-b border-stone-100 pb-4">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
-                Your order
-              </p>
-              <h2 id="cart-heading" className="font-display text-2xl font-bold text-stone-900 tracking-tight">
-                {t("food.cart_title")}
-              </h2>
-            </div>
-            <div className="grid size-11 place-items-center rounded-full bg-emerald-50 text-emerald-600 shadow-sm">
-              <ShoppingBag className="size-5" />
-            </div>
-          </div>
-          
-          <div className="overflow-y-auto max-h-[400px] scrollbar-hide">
-            {cartItems.length === 0 ? (
-              <div className="py-14 text-center">
-                <div className="mx-auto grid size-16 place-items-center rounded-full bg-stone-50 text-stone-400 border border-stone-100">
-                  <UtensilsCrossed className="size-6" />
-                </div>
-                <p className="mt-4 text-xs font-semibold text-stone-500 max-w-xs mx-auto leading-relaxed">
-                  {t('food.cart_empty')}
-                </p>
+                  </>
+                )}
               </div>
-            ) : (
-              <div className="divide-y divide-stone-100">
-                <AnimatePresence initial={false}>
-                  {cartItems.map((item) => {
-                    const transId = item.id.replace("-", "");
-                    const name = language === 'en' ? (t(`food_item.${transId}.name` as any) || item.englishName) : item.name;
-                    return (
-                      <motion.div 
-                        key={item.id} 
-                        className="py-4" 
-                        id={`cart-item-${item.id}`}
-                        layout
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex gap-3">
-                          <img
-                            src={item.image}
-                            alt=""
-                            width={64}
-                            height={64}
-                            loading="lazy"
-                            className="size-16 rounded-2xl object-cover shadow-sm"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <h3 className="truncate text-sm font-semibold text-stone-800">{name}</h3>
-                            <p className="mt-1 text-sm font-extrabold text-stone-950">
-                              {money.format(item.price * item.quantity)}
-                            </p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 text-stone-400 hover:text-red-600 rounded-full"
-                            onClick={() => changeQuantity(item.id, -item.quantity)}
-                            aria-label={language === 'en' ? `Remove ${name} from cart` : `ลบ ${name} ออกจากตะกร้า`}
-                            id={`remove-cart-${item.id}`}
-                          >
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </div>
-                        <div className="mt-3 ml-[76px] flex w-fit items-center gap-1 rounded-full bg-stone-100 p-0.5">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 rounded-full text-stone-600"
-                            onClick={() => changeQuantity(item.id, -1)}
-                            aria-label={language === 'en' ? `Decrease quantity of ${name} by 1` : `ลดจำนวน ${name} ในตะกร้าลง 1`}
-                            id={`decrease-cart-${item.id}`}
-                          >
-                            <Minus className="size-3.5" />
-                          </Button>
-                          <span className="w-6 text-center text-xs font-bold text-stone-800">{item.quantity}</span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 rounded-full text-stone-600"
-                            onClick={() => changeQuantity(item.id, 1)}
-                            aria-label={language === 'en' ? `Increase quantity of ${name} by 1` : `เพิ่มจำนวน ${name} ในตะกร้าอีก 1`}
-                            id={`increase-cart-${item.id}`}
-                          >
-                            <Plus className="size-3.5" />
-                          </Button>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
+            </div>
+
+            {/* B. View Mode Switcher */}
+            <div className="px-4">
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2 font-mono">
+                {language === 'en' ? 'View Mode' : 'โหมดการดู'}
+              </span>
+              <div className="flex flex-col gap-1.5">
+                <button
+                  onClick={() => setActiveTab("kanban")}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    activeTab === "kanban"
+                      ? "bg-sky-600 text-white shadow-sm"
+                      : "text-stone-600 hover:text-stone-900 bg-stone-100/60 hover:bg-stone-100"
+                  }`}
+                  id="sidebar-tab-kanban-trigger"
+                >
+                  <Sliders className="size-3.5" />
+                  <span>{language === 'en' ? 'Sprint Board' : 'บอร์ดความคืบหน้า'}</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab("demo")}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    activeTab === "demo"
+                      ? "bg-sky-600 text-white shadow-sm"
+                      : "text-stone-600 hover:text-stone-900 bg-stone-100/60 hover:bg-stone-100"
+                  }`}
+                  id="sidebar-tab-demo-trigger"
+                >
+                  <Sparkles className="size-3.5" />
+                  <span>{language === 'en' ? 'Live Demo' : 'เดโมระบบจำลอง'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* C. Demo Role Switcher */}
+            {activeHouse.code === "TN07" && activeTab === "demo" && (
+              <div className="px-4">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2 font-mono">
+                  {language === 'en' ? 'Demo Role' : 'บทบาทผู้ใช้งาน'}
+                </span>
+                <div className="flex flex-col gap-1.5">
+                  {[
+                    { value: "customer", labelTh: "ลูกค้า (Customer)", labelEn: "Customer" },
+                    { value: "staff", labelTh: "พนักงาน (Staff)", labelEn: "Staff" },
+                    { value: "kitchen", labelTh: "ห้องครัว (Kitchen)", labelEn: "Kitchen" },
+                  ].map((role) => (
+                    <button
+                      key={role.value}
+                      onClick={() => setDemoRole(role.value)}
+                      className={`w-full px-3 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                        demoRole === role.value
+                          ? "bg-sky-50 text-sky-800 border border-sky-200"
+                          : "text-stone-600 hover:text-stone-900 bg-white hover:bg-stone-100/50 border border-stone-200/60"
+                      }`}
+                      id={`sidebar-role-${role.value}-trigger`}
+                    >
+                      <span>{language === 'en' ? role.labelEn : role.labelTh}</span>
+                      {demoRole === role.value && <Check className="size-3.5 text-sky-600 shrink-0" />}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
-          
-          <div className="border-t border-dashed border-stone-200 pt-5 mt-4">
-            <div className="flex justify-between text-xs text-stone-500 font-bold">
-              <span>{t("food.cart_subtotal")}</span>
-              <span>{money.format(subtotal)}</span>
+
+          <div className="p-4 border-t border-stone-200 bg-white flex flex-col gap-2 shrink-0">
+            <div className="text-[10px] text-stone-400 font-bold text-center">
+              Powered by Botnoi WebAvatar
             </div>
-            <div className="mt-2.5 flex justify-between text-xs text-stone-500 font-bold">
-              <span>{t("food.cart_service")}</span>
-              <span>{money.format(serviceFee)}</span>
-            </div>
-            <div className="mt-4 pt-3 border-t border-stone-100 flex items-end justify-between">
-              <span className="font-bold text-stone-800 text-sm">{t("food.cart_total")}</span>
-              <span className="font-display text-2xl font-bold text-emerald-600">
-                {money.format(subtotal + serviceFee)}
-              </span>
-            </div>
-            <Button
-              variant="restaurant"
-              size="restaurant"
-              className="mt-6 w-full cursor-pointer font-bold justify-center"
-              disabled={cartItems.length === 0}
-              onClick={checkout}
-              aria-label={language === 'en' ? 'Place your order and send to kitchen' : 'ยืนยันการสั่งซื้อและชำระเงิน'}
-              id="restaurant-checkout-button"
+            <Link
+              to="/"
+              className="w-full text-center py-2 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 text-xs font-bold rounded-xl transition-all border border-stone-200/80"
+              id="sidebar-back-home-button"
             >
-              {t("food.cart_checkout")} <ChevronRight className="size-4" />
-            </Button>
-            <p className="mt-3.5 text-center text-[10px] text-stone-400 font-bold uppercase tracking-wider">
-              {language === 'en' ? 'Cart details will be saved on this device' : 'ข้อมูลตะกร้าจะถูกบันทึกไว้ในอุปกรณ์นี้'}
-            </p>
+              {language === 'en' ? 'Back to Hub' : 'กลับสู่หน้าหลัก'}
+            </Link>
           </div>
         </aside>
+
+      {/* 3. Main Workspace Container (Fluid to take full width and height with sidebar layout) */}
+      <div className={`w-full grow flex flex-col overflow-y-auto min-h-0 relative ${activeHouse.code === "TN07" && activeTab === "demo" ? "px-0 py-0" : "px-6 py-8 md:px-10"}`}>
+
+        {/* Floating Sidebar Toggle Button (Only when sidebar is collapsed) */}
+        {sidebarCollapsed && (
+          <button
+            onClick={() => setSidebarCollapsed(false)}
+            className="absolute top-4 left-4 z-40 p-2 bg-white/95 backdrop-blur-md hover:bg-white text-stone-700 hover:text-sky-600 rounded-full shadow-lg border border-stone-200 cursor-pointer flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+            id="floating-sidebar-toggle-btn"
+            title={language === 'en' ? "Open menu" : "เปิดเมนู"}
+          >
+            <Menu className="size-4" />
+          </button>
+        )}
+
+        {/* Breadcrumb Path Route - Hidden when full screen */}
+        {!(activeHouse.code === "TN07" && activeTab === "demo") && (
+          <nav className="mb-6 flex items-center gap-2 text-xs text-stone-500 font-bold" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-sky-600 transition-colors">{language === 'en' ? 'Home' : 'หน้าหลัก'}</Link>
+            <ChevronRight className="size-3 text-stone-400" />
+            <span className="text-sky-600">{activeHouse.code} ({activeHouse.name})</span>
+            <ChevronRight className="size-3 text-stone-400" />
+            <span className="text-stone-800 font-extrabold uppercase font-mono">{activeTypeLabel(activeHouse.type)}</span>
+          </nav>
+        )}
+
+        {/* Main Selection Title - Hidden when full screen */}
+        {!(activeHouse.code === "TN07" && activeTab === "demo") && (
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-200 pb-4 mb-8">
+            <div>
+              <h2 className="text-2xl font-black text-stone-900 tracking-tight flex items-center gap-2">
+                <Sparkles className="size-6 text-sky-600 animate-pulse" />
+                {language === 'en' ? 'Adaptive Client Sandbox' : 'แซนด์บอกซ์จำลองโครงการบ้าน'}
+              </h2>
+              <p className="text-xs text-stone-500 font-bold mt-1">
+                {language === 'en'
+                  ? "Switch houses dynamically. The portal renders hotel booking, flight booking, restaurant orders, or IT shop."
+                  : "สลับดูการทำงานของบ้าน 20 หลังได้ทันที ระบบจะเปลี่ยนฟังก์ชันจำลองและการตอบกลับของ WebAvatar ตามประเภทของบ้าน"
+                }
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* 4. Tab 1: KANBAN SPRINT PROGRESS BOARD */}
+        <AnimatePresence mode="wait">
+          {activeTab === "kanban" && (
+            <motion.div
+              key="kanban-tab"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-6 max-w-7xl mx-auto w-full"
+            >
+              {/* Sprint control header */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-stone-200 p-5 rounded-3xl shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600">
+                    <FolderOpen className="size-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-stone-900 m-0 tracking-wide">
+                      {language === 'en' ? `Construction Sprint Progress — Sprint ${sprint}` : `ความคืบหน้างานก่อสร้างประจำสัปดาห์ — Sprint ${sprint}`}
+                    </h3>
+                    <p className="text-[11px] text-stone-500 mt-0.5 font-bold">
+                      {language === 'en' ? 'Check weekly tasks and sprint cards for: ' : 'ตรวจสอบรายการการ์ดงานของ: '}
+                      <span className="text-sky-600 font-extrabold">{activeHouse.code} - {activeHouse.name}</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Sprint switcher tabs */}
+                <div className="flex bg-stone-100 border border-stone-200 p-1 rounded-xl">
+                  {[1, 2, 3].map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => {
+                        setSprint(num);
+                        triggerToast(language === 'en' ? `Switched to Sprint ${num}` : `สลับข้อมูลเป็น Sprint ${num} เรียบร้อย`);
+                      }}
+                      className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all ${sprint === num
+                          ? "bg-white text-sky-600 border border-stone-200/50 shadow-sm"
+                          : "text-stone-500 hover:text-stone-800"
+                        }`}
+                    >
+                      Sprint {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Kanban Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Column 1: To-Do */}
+                <div className="flex flex-col bg-stone-50/50 border border-stone-200 rounded-3xl p-4 min-h-[400px] shadow-sm">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-stone-400"></span>
+                      <span className="text-xs font-black text-stone-800 tracking-wide">{language === 'en' ? 'To-Do' : 'รอเริ่มงาน'}</span>
+                    </div>
+                    <span className="bg-stone-200/60 text-stone-600 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
+                      {tasksDatabase.todo.length}
+                    </span>
+                  </div>
+                  <div className="space-y-4 overflow-y-auto no-scrollbar">
+                    {tasksDatabase.todo.map((task) => (
+                      <KanbanCard key={task.id} task={task} house={activeHouse} sprint={sprint} language={language} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Column 2: In Progress */}
+                <div className="flex flex-col bg-stone-50/50 border border-stone-200 rounded-3xl p-4 min-h-[400px] shadow-sm">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                      <span className="text-xs font-black text-stone-800 tracking-wide">{language === 'en' ? 'In Progress' : 'กำลังดำเนินการ'}</span>
+                    </div>
+                    <span className="bg-stone-200/60 text-stone-600 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
+                      {tasksDatabase.progress.length}
+                    </span>
+                  </div>
+                  <div className="space-y-4 overflow-y-auto no-scrollbar">
+                    {tasksDatabase.progress.map((task) => (
+                      <KanbanCard key={task.id} task={task} house={activeHouse} sprint={sprint} language={language} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Column 3: Under Review */}
+                <div className="flex flex-col bg-stone-50/50 border border-stone-200 rounded-3xl p-4 min-h-[400px] shadow-sm">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                      <span className="text-xs font-black text-stone-800 tracking-wide">{language === 'en' ? 'Review' : 'ส่งตรวจงาน'}</span>
+                    </div>
+                    <span className="bg-stone-200/60 text-stone-600 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
+                      {tasksDatabase.review.length}
+                    </span>
+                  </div>
+                  <div className="space-y-4 overflow-y-auto no-scrollbar">
+                    {tasksDatabase.review.map((task) => (
+                      <KanbanCard key={task.id} task={task} house={activeHouse} sprint={sprint} language={language} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Column 4: Done */}
+                <div className="flex flex-col bg-stone-50/50 border border-stone-200 rounded-3xl p-4 min-h-[400px] shadow-sm">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
+                      <span className="text-xs font-black text-stone-800 tracking-wide">{language === 'en' ? 'Done' : 'เสร็จสมบูรณ์'}</span>
+                    </div>
+                    <span className="bg-stone-200/60 text-stone-600 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
+                      {tasksDatabase.done.length}
+                    </span>
+                  </div>
+                  <div className="space-y-4 overflow-y-auto no-scrollbar">
+                    {tasksDatabase.done.map((task) => (
+                      <KanbanCard key={task.id} task={task} house={activeHouse} sprint={sprint} language={language} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* 5. Tab 2: INTERACTIVE DYNAMIC PROJECTS (DEMO) */}
+          {activeTab === "demo" && (
+            <motion.div
+              key="demo-tab"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className={activeHouse.code === "TN07" ? "w-full grow flex flex-col overflow-hidden" : "w-full max-w-7xl mx-auto"}
+            >
+
+              {/* RESTAURANT DEMO (MAPPED TO HOUSE 7) */}
+              {activeHouse.type === "restaurant" && (
+                activeHouse.code === "TN07" ? (
+                  <div className="w-full h-[calc(100vh-68px)] overflow-hidden bg-white">
+                    <iframe
+                      src={`https://ran-lung-get.lovable.app/${demoRole}`}
+                      className="w-full h-full border-none"
+                      title="Ran Lung Get LINE LIFF App"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                      id="liff-app-iframe"
+                    />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+                    {/* Left: Food Menu Display */}
+                    <div className="space-y-6">
+                      <div className="bg-white border border-stone-200 p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+                        <div>
+                          <span className="text-[10px] font-bold text-sky-600 uppercase tracking-widest block font-mono">
+                            {language === 'en' ? 'Eco Dome Room Service' : 'ระบบสั่งอาหารแบบไดนามิก'}
+                          </span>
+                          <h3 className="text-xl font-extrabold text-stone-900 mt-1 tracking-tight">
+                            {language === 'en' ? `${activeHouse.name} Café & Dining` : `${activeHouse.name} บริการอาหารอร่อยถึงที่`}
+                          </h3>
+                          <p className="text-xs text-stone-500 font-bold mt-0.5 leading-relaxed">
+                            {language === 'en'
+                              ? "Try speaking commands like \"order Green Curry\" or \"add Mango Sticky Rice to cart\""
+                              : "สั่งวัตถุดิบและอาหารด้วยระบบ WebAvatar (พูดว่า \"เพิ่มแกงเขียวหวานลงตะกร้า\" หรือ \"ชำระเงิน\")"
+                            }
+                          </p>
+                        </div>
+                        <div className="px-4 py-2 bg-sky-50 border border-sky-100 rounded-2xl flex items-center gap-2">
+                          <UtensilsCrossed className="size-4 text-sky-600" />
+                          <span className="text-xs font-bold text-sky-800 font-mono">{activeHouse.style}</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {foodMenu.map((item) => {
+                          const qty = cart[item.id] || 0;
+                          return (
+                            <div
+                              key={item.id}
+                              className="bg-white border border-stone-200 p-5 rounded-3xl hover:border-sky-200 transition-all flex flex-col justify-between hover:shadow-md group"
+                            >
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-[10px] font-bold text-sky-700 tracking-wider font-mono bg-sky-50 px-2 py-0.5 rounded border border-sky-100/50">
+                                    {item.category}
+                                  </span>
+                                  <span className="text-sm font-extrabold text-stone-900 font-mono">{money(item.price)}</span>
+                                </div>
+                                <h4 className="text-sm font-bold text-stone-800 mb-1 group-hover:text-sky-600 transition-colors">
+                                  {language === 'en' ? item.nameEn : item.nameTh}
+                                </h4>
+                                <p className="text-xs text-stone-500 line-clamp-2 leading-relaxed mb-4">
+                                  {language === 'en' ? item.descEn : item.descTh}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center justify-between border-t border-stone-100 pt-3">
+                                <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">{language === 'en' ? 'Item quantity' : 'จำนวนของชิ้นนี้'}</span>
+                                {qty === 0 ? (
+                                  <Button
+                                    variant="restaurant"
+                                    size="restaurantIcon"
+                                    onClick={() => changeFoodQty(item.id, 1)}
+                                    className="h-8 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white transition-all text-xs font-bold gap-1 px-3 cursor-pointer border border-sky-100/30"
+                                    id={`add-${item.id}`}
+                                    aria-label={language === 'en' ? `Add ${item.nameEn} to cart` : `เพิ่ม ${item.nameTh} ลงตะกร้า`}
+                                  >
+                                    <Plus className="size-3" />
+                                    <span>{language === 'en' ? 'Add' : 'หยิบใส่ตะกร้า'}</span>
+                                  </Button>
+                                ) : (
+                                  <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-200 p-0.5 rounded-xl">
+                                    <button
+                                      onClick={() => changeFoodQty(item.id, -1)}
+                                      className="p-1 text-stone-500 hover:text-red-500 hover:bg-white rounded-lg transition-colors cursor-pointer"
+                                      id={`decrease-${item.id}`}
+                                      aria-label={language === 'en' ? `Decrease quantity of ${item.nameEn}` : `ลดจำนวน ${item.nameTh}`}
+                                    >
+                                      <Minus className="size-3" />
+                                    </button>
+                                    <span className="w-5 text-center text-xs font-black text-stone-800 font-mono" id={`quantity-${item.id}`}>{qty}</span>
+                                    <button
+                                      onClick={() => changeFoodQty(item.id, 1)}
+                                      className="p-1 text-stone-500 hover:text-sky-600 hover:bg-white rounded-lg transition-colors cursor-pointer"
+                                      id={`increase-${item.id}`}
+                                      aria-label={language === 'en' ? `Increase quantity of ${item.nameEn}` : `เพิ่มจำนวน ${item.nameTh}`}
+                                    >
+                                      <Plus className="size-3" />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Right: Cart Overlay & Invoice receipt */}
+                    <div className="bg-white border border-stone-200 p-6 rounded-3xl self-start shadow-md w-full">
+                      <div className="flex items-center justify-between border-b border-stone-100 pb-4 mb-4">
+                        <div>
+                          <span className="text-[10px] text-sky-600 font-bold uppercase tracking-wider block font-mono">
+                            {language === 'en' ? 'Room bill' : 'ใบสั่งอาหาร'}
+                          </span>
+                          <h4 className="text-lg font-black text-stone-900 tracking-tight">{language === 'en' ? 'Your Order Cart' : 'รายการที่เลือก'}</h4>
+                        </div>
+                        <div className="w-10 h-10 bg-sky-50 border border-sky-100 rounded-xl flex items-center justify-center text-sky-600 shadow-inner">
+                          <ShoppingBag className="size-5" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1 no-scrollbar">
+                        {Object.keys(cart).length === 0 ? (
+                          <div className="py-12 text-center text-stone-400">
+                            <UtensilsCrossed className="size-10 text-stone-300 mx-auto opacity-75 mb-3" />
+                            <p className="text-xs font-semibold">{language === 'en' ? 'Your cart is empty' : 'ยังไม่ได้กดเลือกสินค้า'}</p>
+                            <p className="text-[10px] text-stone-400 mt-1">{language === 'en' ? 'Choose from the left menu items' : 'ลองกดปุ่มหยิบใส่ตะกร้าด้านซ้าย'}</p>
+                          </div>
+                        ) : (
+                          foodMenu
+                            .filter(item => (cart[item.id] || 0) > 0)
+                            .map(item => {
+                              const qty = cart[item.id];
+                              return (
+                                <div key={item.id} className="flex items-center justify-between gap-3 text-xs bg-stone-50 p-2.5 rounded-2xl border border-stone-100">
+                                  <div className="min-w-0 flex-1">
+                                    <h5 className="font-bold text-stone-800 truncate">{language === 'en' ? item.nameEn : item.nameTh}</h5>
+                                    <span className="text-[10px] text-stone-500 font-mono font-bold">{qty} x {money(item.price)}</span>
+                                  </div>
+                                  <span className="font-bold text-stone-900 font-mono shrink-0">{money(item.price * qty)}</span>
+                                  <button
+                                    onClick={() => changeFoodQty(item.id, -qty)}
+                                    className="text-stone-400 hover:text-rose-500 p-1 transition-colors cursor-pointer"
+                                    id={`remove-cart-${item.id}`}
+                                    aria-label={language === 'en' ? `Remove ${item.nameEn} from cart` : `ลบ ${item.nameTh}`}
+                                  >
+                                    <Trash2 className="size-3.5" />
+                                  </button>
+                                </div>
+                              );
+                            })
+                        )}
+                      </div>
+
+                      <div className="border-t border-dashed border-stone-200 pt-4 mt-4">
+                        <div className="flex justify-between text-xs font-bold text-stone-500 mb-2">
+                          <span>{language === 'en' ? 'Subtotal' : 'รวมค่าอาหาร'}</span>
+                          <span className="font-mono">{money(cartTotal)}</span>
+                        </div>
+                        <div className="flex justify-between text-xs font-bold text-stone-500 mb-3">
+                          <span>{language === 'en' ? 'Dome Service Fee' : 'ค่าบริการรูมเซอร์วิส'}</span>
+                          <span className="font-mono">{money(cartTotal > 0 ? 50 : 0)}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-stone-100 pt-3 text-sm font-extrabold text-stone-900">
+                          <span>{language === 'en' ? 'Total Payment' : 'ยอดชำระสุทธิ'}</span>
+                          <span className="text-sky-600 font-mono text-lg">{money(cartTotal > 0 ? cartTotal + 50 : 0)}</span>
+                        </div>
+                      </div>
+
+                      <Button
+                        className="mt-6 w-full cursor-pointer bg-sky-600 hover:bg-sky-700 text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 transition-all shadow-md shadow-sky-600/10"
+                        disabled={Object.keys(cart).length === 0}
+                        onClick={() => setRestaurantConfirmed(true)}
+                        id="restaurant-checkout-button"
+                        aria-label="ยืนยันการชำระเงินค่าอาหารรูมเซอร์วิส"
+                      >
+                        <span>{language === 'en' ? 'Confirm Room Order' : 'ยืนยันสั่งอาหารเข้าห้อง'}</span>
+                        <ChevronRight className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )
+              )}
+
+              {/* ACCOMMODATION DEMO (MAPPED TO ACCOMMODATION TYPE HOUSES) */}
+              {activeHouse.type === "accommodation" && (
+                <div className="max-w-xl mx-auto bg-white border border-stone-200 p-6 sm:p-8 rounded-3xl shadow-md">
+                  <div className="text-center mb-6">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-sky-50 border border-sky-100 text-sky-600 mb-3 font-mono uppercase tracking-wider">
+                      <BedDouble className="size-3.5" />
+                      {language === 'en' ? 'Accommodation Booking' : 'ระบบสำรองห้องพักสากล'}
+                    </span>
+                    <h3 className="text-xl font-extrabold text-stone-900 tracking-tight">
+                      {language === 'en' ? `Book ${activeHouse.name}` : `จองห้องพักโครงการ ${activeHouse.name}`}
+                    </h3>
+                    <p className="text-xs text-stone-500 font-bold mt-1">
+                      {language === 'en'
+                        ? 'Simulate resort booking flow for premium cabins and architectural estates.'
+                        : 'ทดสอบจำลองกระบวนการกรอกเอกสารจองที่พักและสิทธิพักตากอากาศ'
+                      }
+                    </p>
+                  </div>
+
+                  <form
+                    onSubmit={(e) => { e.preventDefault(); setBookingConfirmed(true); }}
+                    className="space-y-4"
+                    aria-label="แบบฟอร์มจองที่พักจำลอง"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex flex-col">
+                        <label htmlFor="checkin-date" className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">{language === 'en' ? 'Check-in Date' : 'วันเช็คอิน'}</label>
+                        <div className="relative flex items-center bg-stone-50 border border-stone-200 rounded-xl px-3 py-2">
+                          <Calendar className="size-4 text-stone-400 mr-2" />
+                          <input
+                            type="date"
+                            id="checkin-date"
+                            required
+                            value={checkIn}
+                            onChange={(e) => setCheckIn(e.target.value)}
+                            className="bg-transparent text-xs text-stone-800 focus:outline-none w-full cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <label htmlFor="checkout-date" className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">{language === 'en' ? 'Check-out Date' : 'วันเช็คเอาท์'}</label>
+                        <div className="relative flex items-center bg-stone-50 border border-stone-200 rounded-xl px-3 py-2">
+                          <Calendar className="size-4 text-stone-400 mr-2" />
+                          <input
+                            type="date"
+                            id="checkout-date"
+                            required
+                            value={checkOut}
+                            onChange={(e) => setCheckOut(e.target.value)}
+                            className="bg-transparent text-xs text-stone-800 focus:outline-none w-full cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex flex-col">
+                        <label htmlFor="guests-count" className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">{language === 'en' ? 'Guests' : 'จำนวนผู้เข้าพัก'}</label>
+                        <select
+                          id="guests-count"
+                          value={guests}
+                          onChange={(e) => setGuests(Number(e.target.value))}
+                          className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-800 font-semibold focus:outline-none cursor-pointer"
+                        >
+                          {[1, 2, 3, 4, 5].map(n => (
+                            <option key={n} value={n} className="bg-white">{n} {language === 'en' ? 'Person' : 'ท่าน'}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex flex-col">
+                        <label htmlFor="room-style" className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">{language === 'en' ? 'Room Category' : 'รูปแบบห้องพัก'}</label>
+                        <select
+                          id="room-style"
+                          value={roomType}
+                          onChange={(e) => setRoomType(e.target.value)}
+                          className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-800 font-semibold focus:outline-none cursor-pointer"
+                        >
+                          <option value="Standard Room" className="bg-white">{language === 'en' ? 'Standard Studio' : 'ห้องสตูดิโอทั่วไป'}</option>
+                          <option value="Deluxe Cabin" className="bg-white">{language === 'en' ? 'Deluxe Forest Cabin' : 'ห้องดีลักซ์วิวป่าไม้'}</option>
+                          <option value="Presidential Penthouse" className="bg-white">{language === 'en' ? 'Presidential Glass Penthouse' : 'ห้องเพนต์เฮาส์เรือนกระจก'}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="bg-sky-50/50 border border-sky-100 p-4 rounded-2xl flex flex-col justify-between text-xs text-stone-700 font-medium">
+                      <span className="text-[9px] text-sky-600 font-bold block uppercase tracking-wider mb-1">{language === 'en' ? 'Estimated Pricing (Per Night)' : 'ราคาประเมินค่าเข้าพักต่อคืน'}</span>
+                      <span className="text-lg font-black text-sky-700 font-mono">{money(activeHouse.basePrice / 1000)} / คืน</span>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full cursor-pointer bg-sky-600 hover:bg-sky-700 text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 shadow-md shadow-sky-600/10"
+                      id="confirm-booking-button"
+                      aria-label="กดยืนยันการจองตั๋วบ้านพัก"
+                    >
+                      <span>{language === 'en' ? 'Secure Booking Reservation' : 'ยืนยันจองห้องพักทันที'}</span>
+                      <ChevronRight className="size-4" />
+                    </Button>
+                  </form>
+                </div>
+              )}
+
+              {/* FLIGHT BOOKING DEMO (MAPPED TO FLIGHT TYPE HOUSES) */}
+              {activeHouse.type === "flight" && (
+                <div className="max-w-xl mx-auto bg-white border border-stone-200 p-6 sm:p-8 rounded-3xl shadow-md">
+                  <div className="text-center mb-6">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-sky-50 border border-sky-100 text-sky-600 mb-3 font-mono uppercase tracking-wider">
+                      <Plane className="size-3.5" />
+                      {language === 'en' ? 'Flight Booking Demo' : 'ระบบจองตั๋วเที่ยวบินด่วน'}
+                    </span>
+                    <h3 className="text-xl font-extrabold text-stone-900 tracking-tight">
+                      {language === 'en' ? `Flight to ${activeHouse.name}` : `ตั๋วเครื่องบินสำหรับโครงการ ${activeHouse.name}`}
+                    </h3>
+                    <p className="text-xs text-stone-500 font-bold mt-1">
+                      {language === 'en'
+                        ? 'Simulate airline seat reservations for visiting project construction sites.'
+                        : 'จำลองการเดินทางไปรับหน้างานก่อสร้างด่วนทางอากาศสำหรับสายลุย'
+                      }
+                    </p>
+                  </div>
+
+                  <form
+                    onSubmit={(e) => { e.preventDefault(); setFlightConfirmed(true); }}
+                    className="space-y-4"
+                    aria-label="แบบฟอร์มจองตั๋วบินจำลอง"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex flex-col">
+                        <label htmlFor="city-origin" className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">{language === 'en' ? 'From' : 'เมืองต้นทาง'}</label>
+                        <select
+                          id="city-origin"
+                          value={fromCity}
+                          onChange={(e) => setFromCity(e.target.value)}
+                          className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-800 font-semibold focus:outline-none cursor-pointer"
+                        >
+                          <option value="Bangkok (DMK)" className="bg-white">Bangkok (DMK)</option>
+                          <option value="Phuket (HKT)" className="bg-white">Phuket (HKT)</option>
+                          <option value="Udon Thani (UTH)" className="bg-white">Udon Thani (UTH)</option>
+                        </select>
+                      </div>
+                      <div className="flex flex-col">
+                        <label htmlFor="city-destination" className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">{language === 'en' ? 'To' : 'เมืองปลายทาง'}</label>
+                        <select
+                          id="city-destination"
+                          value={toCity}
+                          onChange={(e) => setToCity(e.target.value)}
+                          className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-800 font-semibold focus:outline-none cursor-pointer"
+                        >
+                          <option value="Chiang Mai (CNX)" className="bg-white">Chiang Mai (CNX)</option>
+                          <option value="Hat Yai (HDY)" className="bg-white">Hat Yai (HDY)</option>
+                          <option value="Khon Kaen (KKC)" className="bg-white">Khon Kaen (KKC)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label htmlFor="flight-date" className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">{language === 'en' ? 'Departure Date' : 'วันออกเดินทาง'}</label>
+                      <div className="relative flex items-center bg-stone-50 border border-stone-200 rounded-xl px-3 py-2">
+                        <Calendar className="size-4 text-stone-400 mr-2" />
+                        <input
+                          type="date"
+                          id="flight-date"
+                          required
+                          value={departDate}
+                          onChange={(e) => setDepartDate(e.target.value)}
+                          className="bg-transparent text-xs text-stone-800 focus:outline-none w-full cursor-pointer"
+                        />
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full cursor-pointer bg-[#0284c7] hover:bg-[#0369a1] text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 shadow-md shadow-sky-600/10"
+                      id="search-flight-button"
+                      aria-label="กดยืนยันค้นหาไฟล์ตบินจำลอง"
+                    >
+                      <span>{language === 'en' ? 'Search & Book Boarding Pass' : 'จองเที่ยวบินด่วน'}</span>
+                      <ChevronRight className="size-4" />
+                    </Button>
+                  </form>
+                </div>
+              )}
+
+              {/* E-COMMERCE DEMO (MAPPED TO ECOMMERCE TYPE HOUSES) */}
+              {activeHouse.type === "ecommerce" && (
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+                  {/* Products Grid */}
+                  <div className="space-y-6">
+                    <div className="bg-white border border-stone-200 p-6 rounded-3xl shadow-sm">
+                      <span className="text-[10px] font-bold text-sky-600 uppercase tracking-widest block font-mono">
+                        {language === 'en' ? 'Smart Home E-Store' : 'ร้านค้าเครื่องใช้อัจฉริยะ'}
+                      </span>
+                      <h3 className="text-xl font-extrabold text-stone-900 mt-1 tracking-tight">
+                        {language === 'en' ? `${activeHouse.name} Smart Accessories` : `${activeHouse.name} อุปกรณ์ตกแต่งบ้านอัจฉริยะ`}
+                      </h3>
+                      <p className="text-xs text-stone-500 font-bold mt-1">
+                        {language === 'en'
+                          ? 'Add home decor items and automated appliances to build your dream home.'
+                          : 'เลือกซื้อโมดูลตกแต่งและเครื่องใช้ IoT สำหรับบ้านของคุณเพื่อทดสอบ'
+                        }
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {techProducts.map((p) => {
+                        const qty = shopCart[p.id] || 0;
+                        return (
+                          <div key={p.id} className="bg-white border border-stone-200 p-4 rounded-2xl flex flex-col justify-between hover:border-sky-200 hover:shadow-md transition-all">
+                            <div className="mb-3">
+                              <h4 className="text-xs font-bold text-stone-800">{language === 'en' ? p.nameEn : p.nameTh}</h4>
+                              <span className="text-sm font-extrabold text-sky-600 font-mono block mt-1">{money(p.price)}</span>
+                            </div>
+                            <div className="flex items-center justify-between border-t border-stone-100 pt-3">
+                              <span className="text-[10px] text-stone-400 font-bold">{language === 'en' ? 'Quantity' : 'จำนวน'}</span>
+                              {qty === 0 ? (
+                                <button
+                                  onClick={() => changeTechQty(p.id, 1)}
+                                  className="h-8 rounded-xl bg-stone-50 border border-stone-200 hover:bg-sky-600 hover:text-white px-3 text-xs font-bold transition-all cursor-pointer text-stone-600 hover:border-sky-600"
+                                  id={`add-tech-${p.id}`}
+                                >
+                                  + {language === 'en' ? 'Add' : 'เพิ่ม'}
+                                </button>
+                              ) : (
+                                <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-200 p-0.5 rounded-lg">
+                                  <button
+                                    onClick={() => changeTechQty(p.id, -1)}
+                                    className="p-1 text-stone-400 hover:text-red-500 cursor-pointer"
+                                    id={`dec-tech-${p.id}`}
+                                  >
+                                    <Minus className="size-3" />
+                                  </button>
+                                  <span className="w-4 text-center text-xs font-black text-stone-800 font-mono">{qty}</span>
+                                  <button
+                                    onClick={() => changeTechQty(p.id, 1)}
+                                    className="p-1 text-stone-400 hover:text-sky-500 cursor-pointer"
+                                    id={`inc-tech-${p.id}`}
+                                  >
+                                    <Plus className="size-3" />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Cart Sidebar */}
+                  <div className="bg-white border border-stone-200 p-6 rounded-3xl self-start w-full shadow-sm">
+                    <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-4">
+                      <h4 className="text-base font-extrabold text-stone-800">{language === 'en' ? 'Shopping Cart' : 'ตะกร้าสินค้า'}</h4>
+                      <ShoppingBag className="size-5 text-sky-600" />
+                    </div>
+
+                    <div className="space-y-3 mb-4">
+                      {Object.keys(shopCart).length === 0 ? (
+                        <p className="text-xs text-stone-400 text-center py-8">{language === 'en' ? 'Cart is empty' : 'ยังไม่มีสินค้าในตะกร้า'}</p>
+                      ) : (
+                        techProducts
+                          .filter(p => (shopCart[p.id] || 0) > 0)
+                          .map(p => (
+                            <div key={p.id} className="flex justify-between text-xs bg-stone-50 p-2 rounded-xl border border-stone-100">
+                              <span>{language === 'en' ? p.nameEn : p.nameTh} x{shopCart[p.id]}</span>
+                              <span className="font-bold text-stone-900 font-mono">{money(p.price * shopCart[p.id])}</span>
+                            </div>
+                          ))
+                      )}
+                    </div>
+
+                    <div className="border-t border-stone-100 pt-3 flex justify-between text-xs font-bold text-stone-500 mb-4">
+                      <span>{language === 'en' ? 'Subtotal' : 'ราคารวม'}</span>
+                      <span className="text-sky-600 font-mono text-sm">{money(shopTotal)}</span>
+                    </div>
+
+                    <Button
+                      className="w-full cursor-pointer bg-sky-600 hover:bg-sky-700 text-white font-black text-xs py-3 rounded-2xl flex items-center justify-center gap-1.5 shadow-md shadow-sky-600/10"
+                      disabled={shopTotal === 0}
+                      onClick={() => setEcommerceConfirmed(true)}
+                      id="tech-checkout-button"
+                      aria-label="กดยืนยันชำระเงินซื้อสินค้าตกแต่งบ้าน"
+                    >
+                      <span>{language === 'en' ? 'Checkout Invoice' : 'ชำระเงินและออกใบสั่งซื้อ'}</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      <footer className="border-t border-stone-200/80 bg-white py-8 text-center text-xs text-stone-500 relative z-10">
-        <span className="font-display font-bold text-stone-900 tracking-wide">BOTNOI RESTAURANT</span> ·{' '}
-        {language === 'en' ? 'Thai food cooked with heart' : 'อาหารไทยด้วยหัวใจ'}
-      </footer>
+      {/* CONFIRMATION MODALS (RECEIPTS) */}
 
-      <Dialog open={receiptOpen} onOpenChange={setReceiptOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border-stone-200 p-0 sm:max-w-md text-stone-800">
-          {receipt && (
-            <div className="receipt-paper p-6 sm:p-8 relative">
-              <DialogHeader className="items-center text-center">
-                <div className="mb-3 grid size-14 place-items-center rounded-full bg-emerald-500 text-white shadow-md">
-                  <Check className="size-7" />
-                </div>
-                <DialogTitle className="font-display text-2xl text-stone-900 font-black tracking-tight">
-                  {language === 'en' ? 'Order Successful!' : 'สั่งซื้อสำเร็จ!'}
-                </DialogTitle>
-                <DialogDescription className="font-semibold text-stone-500 text-xs">
-                  {language === 'en' ? 'The kitchen has received your order.' : 'ครัวได้รับออเดอร์ของคุณแล้ว'}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="my-6 border-y border-dashed border-stone-200 py-4 text-center">
-                <p className="font-display text-lg font-bold text-stone-900 tracking-wide">BOTNOI RESTAURANT</p>
-                <p className="mt-1 text-xs text-stone-500">
-                  {t("food.receipt_title")} · {t("food.receipt_id")} {receipt.orderId}
-                </p>
-                <p className="text-xs text-stone-500 font-mono mt-0.5">{receipt.orderedAt}</p>
-              </div>
-              <div className="space-y-3">
-                {receipt.items.map((item) => {
-                  const transId = item.id.replace("-", "");
-                  const name = language === 'en' ? (t(`food_item.${transId}.name` as any) || item.englishName) : item.name;
-                  return (
-                    <div key={item.id} className="flex justify-between gap-4 text-xs font-bold text-stone-700">
-                      <span>
-                        {item.quantity} × {name}
-                      </span>
-                      <span className="shrink-0 font-bold text-stone-900 font-mono">
-                        {money.format(item.price * item.quantity)}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-5 space-y-2 border-t border-dashed border-stone-200 pt-4 text-xs font-bold">
-                <div className="flex justify-between text-stone-500">
-                  <span>{t("food.cart_subtotal")}</span>
-                  <span className="font-mono">{money.format(receipt.subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-stone-500">
-                  <span>{t("food.cart_service")}</span>
-                  <span className="font-mono">{money.format(receipt.serviceFee)}</span>
-                </div>
-                <div className="flex justify-between pt-3 border-t border-stone-100 font-display text-xl font-bold">
-                  <span>{t("food.cart_total")}</span>
-                  <span className="text-emerald-600 font-mono">{money.format(receipt.total)}</span>
-                </div>
-              </div>
-              <div className="mt-6 rounded-2xl bg-stone-100/70 border border-stone-200/20 p-4 text-center text-xs text-stone-700 font-bold">
-                {language === 'en' ? 'Thank you for your order! Enjoy your meal.' : 'ขอบคุณที่อุดหนุน ขอให้อร่อยกับทุกคำ'}
-              </div>
-              <Button
-                variant="restaurantOutline"
-                size="restaurant"
-                className="mt-4 w-full font-bold cursor-pointer hover:bg-stone-100"
-                onClick={() => setReceiptOpen(false)}
-                id="close-receipt-modal"
-              >
-                {t("food.receipt_close")}
-              </Button>
+      {/* 1. Restaurant Receipt Dialog */}
+      <Dialog open={restaurantConfirmed} onOpenChange={setRestaurantConfirmed}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border-stone-200 bg-white text-stone-800 p-6 sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-3 grid size-12 place-items-center rounded-full bg-sky-500 text-white shadow-md">
+              <Check className="size-6" />
             </div>
-          )}
+            <DialogTitle className="text-xl font-extrabold text-stone-900 tracking-tight">
+              {language === 'en' ? 'Order Placed successfully!' : 'ส่งออเดอร์สำเร็จ!'}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-stone-500 font-semibold">
+              {language === 'en' ? `The kitchen of ${activeHouse.name} is preparing your food.` : `ครัวของ ${activeHouse.name} ได้รับรายการแล้ว`}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="my-5 border-y border-dashed border-stone-200 py-4 text-center font-mono">
+            <p className="text-sm font-bold text-stone-900 uppercase">{activeHouse.name} Dining Service</p>
+            <p className="text-[10px] text-stone-400 mt-1 font-bold">Receipt ID: #ED{Math.floor(1000 + Math.random() * 9000)}</p>
+          </div>
+          <div className="space-y-2 text-xs">
+            {foodMenu.filter(i => (cart[i.id] || 0) > 0).map(item => (
+              <div key={item.id} className="flex justify-between text-stone-700">
+                <span>{cart[item.id]} × {language === 'en' ? item.nameEn : item.nameTh}</span>
+                <span className="font-mono text-stone-900 font-bold">{money(item.price * cart[item.id])}</span>
+              </div>
+            ))}
+            <div className="flex justify-between text-stone-500 pt-2 border-t border-stone-100">
+              <span>{language === 'en' ? 'Service Fee' : 'ค่าบริการรูมเซอร์วิส'}</span>
+              <span className="font-mono">฿50</span>
+            </div>
+            <div className="flex justify-between text-sm font-black text-stone-900 pt-2 border-t border-stone-200">
+              <span>{language === 'en' ? 'Total charged' : 'รวมชำระ'}</span>
+              <span className="text-sky-600 font-mono">{money(cartTotal + 50)}</span>
+            </div>
+          </div>
+          <button
+            onClick={() => { setRestaurantConfirmed(false); setCart({}); }}
+            className="mt-6 w-full cursor-pointer bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs py-2.5 rounded-xl border border-stone-200"
+            id="close-restaurant-modal"
+          >
+            {language === 'en' ? 'Close & Order Again' : 'ปิดหน้านี้'}
+          </button>
         </DialogContent>
       </Dialog>
+
+      {/* 2. Accommodation Receipt Dialog */}
+      <Dialog open={bookingConfirmed} onOpenChange={setBookingConfirmed}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border-stone-200 bg-white text-stone-800 p-6 sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-3 grid size-12 place-items-center rounded-full bg-sky-500 text-white shadow-md">
+              <CheckCircle className="size-6" />
+            </div>
+            <DialogTitle className="text-xl font-extrabold text-stone-900 tracking-tight">
+              {language === 'en' ? 'Reservation Confirmed!' : 'จองที่พักสำเร็จ!'}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-stone-500 font-semibold">
+              {language === 'en' ? 'Your booking sheet has been saved.' : 'ข้อมูลการเข้าพักของคุณถูกบันทึกเรียบร้อย'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="my-4 border-y border-dashed border-stone-200 py-3 text-center text-xs">
+            <p className="font-bold text-stone-900 uppercase tracking-wider">{activeHouse.name}</p>
+            <p className="text-[10px] text-stone-400 mt-1 font-mono font-bold">Reference: #BK{Math.floor(100000 + Math.random() * 900000)}</p>
+          </div>
+          <div className="space-y-3 text-xs">
+            <div className="flex justify-between">
+              <span className="text-stone-500 font-bold">{language === 'en' ? 'Check-in' : 'วันเช็คอิน'}</span>
+              <span className="font-bold text-stone-900 font-mono">{checkIn || "2026-07-20"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-500 font-bold">{language === 'en' ? 'Check-out' : 'วันเช็คเอาท์'}</span>
+              <span className="font-bold text-stone-900 font-mono">{checkOut || "2026-07-25"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-500 font-bold">{language === 'en' ? 'Guests count' : 'ผู้เข้าพัก'}</span>
+              <span className="font-bold text-stone-900">{guests} {language === 'en' ? 'person(s)' : 'ท่าน'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-500 font-bold">{language === 'en' ? 'Room Category' : 'รูปแบบห้อง'}</span>
+              <span className="font-bold text-stone-900">{roomType}</span>
+            </div>
+            <div className="flex justify-between border-t border-stone-100 pt-3 text-sm font-black">
+              <span className="text-stone-700">{language === 'en' ? 'Status' : 'สถานะการจอง'}</span>
+              <span className="text-sky-600 font-extrabold uppercase font-mono">{language === 'en' ? 'RESERVED' : 'จองแล้ว'}</span>
+            </div>
+          </div>
+          <button
+            onClick={() => setBookingConfirmed(false)}
+            className="mt-6 w-full cursor-pointer bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs py-2.5 rounded-xl border border-stone-200"
+            id="close-booking-modal"
+          >
+            {language === 'en' ? 'Done' : 'เสร็จสิ้น'}
+          </button>
+        </DialogContent>
+      </Dialog>
+
+      {/* 3. Flight Boarding Pass Modal */}
+      <Dialog open={flightConfirmed} onOpenChange={setFlightConfirmed}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border-stone-200 bg-white text-stone-800 p-6 sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-3 grid size-12 place-items-center rounded-full bg-sky-500 text-white shadow-md">
+              <FileCheck className="size-6" />
+            </div>
+            <DialogTitle className="text-xl font-extrabold text-stone-900 tracking-tight">
+              {language === 'en' ? 'Boarding Pass Issued!' : 'ออกตั๋วเครื่องบินสำเร็จ!'}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-stone-500 font-semibold">
+              {language === 'en' ? 'Please present this ticket at the check-in gate.' : 'โปรดแสดงบัตรผ่านนี้ที่เกตขึ้นเครื่อง'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="my-4 border-y border-dashed border-stone-200 py-3 text-center text-xs">
+            <p className="font-bold text-sky-600 font-mono tracking-widest uppercase">BOTNOI AIRLINE</p>
+            <p className="text-[10px] text-stone-400 mt-1 font-mono font-bold">Flight ID: #BA{Math.floor(100 + Math.random() * 900)}</p>
+          </div>
+          <div className="space-y-3 text-xs">
+            <div className="flex justify-between">
+              <span className="text-stone-500 font-bold">{language === 'en' ? 'From Destination' : 'ต้นทาง'}</span>
+              <span className="font-bold text-stone-900">{fromCity}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-500 font-bold">{language === 'en' ? 'To Destination' : 'ปลายทาง'}</span>
+              <span className="font-bold text-stone-900">{toCity}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-500 font-bold">{language === 'en' ? 'Flight Date' : 'วันเดินทาง'}</span>
+              <span className="font-bold text-stone-900 font-mono">{departDate || "2026-07-28"}</span>
+            </div>
+            <div className="flex justify-between border-t border-stone-100 pt-3 text-sm font-black">
+              <span className="text-stone-700">{language === 'en' ? 'Assigned Seat' : 'ที่นั่ง'}</span>
+              <span className="text-[#0284c7] font-mono">24A (Window)</span>
+            </div>
+          </div>
+          <button
+            onClick={() => setFlightConfirmed(false)}
+            className="mt-6 w-full cursor-pointer bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs py-2.5 rounded-xl border border-stone-200"
+            id="close-flight-modal"
+          >
+            {language === 'en' ? 'Close Ticket' : 'ปิดตั๋ว'}
+          </button>
+        </DialogContent>
+      </Dialog>
+
+      {/* 4. E-Commerce Invoice Modal */}
+      <Dialog open={ecommerceConfirmed} onOpenChange={setEcommerceConfirmed}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border-stone-200 bg-white text-stone-800 p-6 sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-3 grid size-12 place-items-center rounded-full bg-sky-500 text-white shadow-md">
+              <AlertCircle className="size-6" />
+            </div>
+            <DialogTitle className="text-xl font-extrabold text-stone-900 tracking-tight">
+              {language === 'en' ? 'Invoice Paid Successfully!' : 'ชำระใบเสร็จสำเร็จ!'}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-stone-500 font-semibold">
+              {language === 'en' ? 'Your smart home decor order is on its way.' : 'คำสั่งซื้อสินค้าอัจฉริยะของคุณจะถูกจัดส่งเร็วๆ นี้'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="my-4 border-y border-dashed border-stone-200 py-3 text-center text-xs font-mono">
+            <p className="font-bold text-stone-900 uppercase">{activeHouse.name} Store</p>
+            <p className="text-[10px] text-stone-400 mt-1 font-bold">Invoice Ref: #INV{Math.floor(10000 + Math.random() * 90000)}</p>
+          </div>
+          <div className="space-y-2 text-xs">
+            {techProducts.filter(p => (shopCart[p.id] || 0) > 0).map(p => (
+              <div key={p.id} className="flex justify-between text-stone-700">
+                <span>{shopCart[p.id]} x {language === 'en' ? p.nameEn : p.nameTh}</span>
+                <span className="font-mono text-stone-900 font-bold">{money(p.price * shopCart[p.id])}</span>
+              </div>
+            ))}
+            <div className="flex justify-between border-t border-stone-100 pt-2 text-sm font-black text-stone-900">
+              <span>{language === 'en' ? 'Amount Charged' : 'ยอดชำระจริง'}</span>
+              <span className="text-sky-600 font-mono font-bold">{money(shopTotal)}</span>
+            </div>
+          </div>
+          <button
+            onClick={() => { setEcommerceConfirmed(false); setShopCart({}); }}
+            className="mt-6 w-full cursor-pointer bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs py-2.5 rounded-xl border border-stone-200"
+            id="close-tech-modal"
+          >
+            {language === 'en' ? 'Close Invoice' : 'ปิดใบชำระเงิน'}
+          </button>
+        </DialogContent>
+      </Dialog>
+
     </div>
-    </>
+  );
+}
+
+// Kanban Card Component to keep code modular and readable
+interface KanbanCardProps {
+  task: KanbanTask;
+  house: HouseItem;
+  sprint: number;
+  language: string;
+}
+
+function KanbanCard({ task, house, sprint, language }: KanbanCardProps) {
+  const levelColor = task.level === "High" ? "text-rose-600 bg-rose-50 border-rose-100" :
+    task.level === "Medium" ? "text-amber-700 bg-amber-50 border-amber-100" :
+      "text-stone-500 bg-stone-100/60 border-stone-200/65";
+
+  return (
+    <div className="bg-white border border-stone-200 p-4 rounded-2xl hover:border-sky-500 hover:shadow-md transition-all cursor-grab active:cursor-grabbing select-none group">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[9px] font-mono text-stone-400 font-bold uppercase tracking-wide">
+          {house.code}-T{task.id + (sprint * 10)}
+        </span>
+        <span className={`text-[8px] font-bold px-2 py-0.5 rounded-md border ${levelColor}`}>
+          {task.level}
+        </span>
+      </div>
+      <h4 className="text-[11px] font-bold text-stone-700 leading-relaxed mb-3 group-hover:text-sky-600 transition-colors">
+        {language === 'en' ? task.titleEn : task.titleTh} ({house.name})
+      </h4>
+      <div className="flex items-center justify-between border-t border-stone-100 pt-2 text-[9px] text-stone-400 font-bold">
+        <span><Calendar className="size-3 inline-block mr-1 text-stone-400" /> Sprint {sprint}</span>
+        <span className="font-mono text-stone-500">{language === 'en' ? task.daysEn : task.daysTh}</span>
+      </div>
+    </div>
   );
 }
