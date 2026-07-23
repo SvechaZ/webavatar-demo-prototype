@@ -78,7 +78,7 @@ export default function FlightDemo() {
   const heroParallax = useTransform(scrollY, [0, 400], [0, 150]);
 
   const getCityLabel = (city: string) => {
-    if (language === 'en') {
+    if (language !== 'th') {
       const mapping: Record<string, string> = {
         "กรุงเทพฯ (DMK)": "Bangkok (DMK)",
         "เชียงใหม่ (CNX)": "Chiang Mai (CNX)",

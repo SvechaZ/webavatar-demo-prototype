@@ -89,18 +89,21 @@ function DemoCard({ house, t }: { house: HouseItem; t: (key: any) => string }) {
   let typeLabel = "";
   let TypeIcon = UtensilsCrossed;
   let typeBg = "bg-stone-50 text-stone-600 border-stone-200";
-  let cardDescription = "";
+  let cardDescription: string;
+  let displayName = house.name;
 
   if (house.id === -1) {
-    typeLabel = "FLIGHT";
+    typeLabel = t("showcase.type_flight");
     TypeIcon = Plane;
     typeBg = "bg-blue-50 text-blue-700 border-blue-200/50";
-    cardDescription = "Domestic flight booking sandbox";
+    cardDescription = t("showcase.desc_flight");
+    displayName = t("showcase.flight_demo_name");
   } else if (house.id === -2) {
-    typeLabel = "E-SHOP";
+    typeLabel = t("showcase.type_ecommerce");
     TypeIcon = ShoppingBag;
     typeBg = "bg-indigo-50 text-indigo-700 border-indigo-200/50";
-    cardDescription = "Tech retail e-commerce storefront";
+    cardDescription = t("showcase.desc_ecommerce");
+    displayName = t("showcase.itstore_demo_name");
   } else {
     cardDescription = t(`showcase.desc_${house.type}` as any);
     if (house.type === "accommodation") {
@@ -151,7 +154,7 @@ function DemoCard({ house, t }: { house: HouseItem; t: (key: any) => string }) {
         {/* Title & Description */}
         <div className="mb-5">
           <h3 className="text-lg font-black text-foreground mb-2 group-hover:text-primary transition-colors font-mono tracking-tight truncate">
-            {house.name}
+            {displayName}
           </h3>
           <p className="text-xs text-muted-foreground leading-relaxed min-h-[4.5rem] line-clamp-3">
             {cardDescription}
@@ -202,11 +205,11 @@ export default function OrderDemo() {
   // Split filtered results into two groups
   const { sandboxDemos, projectDemos } = useMemo(() => {
     const all = projectData.filter(house => {
-      let overviewText = "";
+      let overviewText: string;
       if (house.id === -1) {
-        overviewText = "Domestic flight booking sandbox";
+        overviewText = t("showcase.desc_flight");
       } else if (house.id === -2) {
-        overviewText = "Tech retail e-commerce storefront";
+        overviewText = t("showcase.desc_ecommerce");
       } else {
         overviewText = t(`showcase.desc_${house.type}` as any);
       }
@@ -245,7 +248,7 @@ export default function OrderDemo() {
               </span>
               <h1 className="text-3xl md:text-4xl font-black text-foreground mt-1 tracking-tight flex items-center gap-2 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                 <Sparkles className="size-8 text-primary animate-pulse" />
-                All demo
+                {t('showcase.portal')}
               </h1>
               <p className="text-sm text-muted-foreground font-medium mt-2 max-w-2xl leading-relaxed">
                 {t('showcase.desc')}
@@ -323,7 +326,7 @@ export default function OrderDemo() {
                 <div className="flex items-center gap-2.5 mb-5">
                   <FlaskConical className="size-4 text-primary" />
                   <h2 className="text-xs font-black text-primary uppercase tracking-widest font-mono">
-                    Sandbox Demos
+                    {t('showcase.sandbox_demos' as any)}
                   </h2>
                   <span className="text-[10px] font-black text-muted-foreground bg-muted/40 border border-border px-2 py-0.5 rounded-full font-mono">
                     {sandboxDemos.length}
