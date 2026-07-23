@@ -49,9 +49,9 @@ export interface Receipt {
 
 // 20 Houses Mock Database mapped to Project Types and URLs
 const projectData: HouseItem[] = [
-  { id: 1, code: 'TN01', name: '01-the-chill-crew', style: 'Modern Minimalist', type: 'accommodation', color: '#6366F1', progress: 85, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
+  { id: 1, code: 'TN01', name: '01-the-chill-crew', style: 'Modern Minimalist', type: 'accommodation', color: '#6366F1', progress: 85, deployedUrl: 'https://ai-learn-hub-22.lovable.app/', githubUrl: 'https://github.com/Icetea0000000000025/ai-learn-hub-22.git  ' },
   { id: 2, code: 'TN02', name: '02-cozy-oracles', style: 'Neo-Classical', type: 'flight', color: '#b45309', progress: 45, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
-  { id: 3, code: 'TN03', name: '03-controller-kings', style: 'Nordic Timber', type: 'ecommerce', color: '#059669', progress: 90, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
+  { id: 3, code: 'TN03', name: '03-controller-kings', style: 'Nordic Timber', type: 'ecommerce', color: '#059669', progress: 90, deployedUrl: 'https://eucerin-mu.vercel.app/', githubUrl: 'https://github.com' },
   { id: 4, code: 'TN04', name: '04-the-netflix-hermits', style: 'Brutalist Concrete', type: 'ecommerce', color: '#1e293b', progress: 10, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 5, code: 'TN05', name: '05-aesthetic-dreamers', style: 'Cozy Wood Cabin', type: 'accommodation', color: '#78350f', progress: 100, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 6, code: 'TN06', name: '06-lo-fi-homebodies', style: 'Glass Contemporary', type: 'flight', color: '#0284c7', progress: 60, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
@@ -64,12 +64,12 @@ const projectData: HouseItem[] = [
     type: 'restaurant', 
     color: '#10B981', 
     progress: 80, 
-    deployedUrl: 'https://ran-lung-get.lovable.app/customer', 
-    githubUrl: 'https://github.com/SvechaZ/ran-lung-get' 
-  },
+    deployedUrl: 'https://ranlunggetdemo.vercel.app/customer' ,
+    githubUrl: 'https://github.com/ran-lung-get/ran-lung-get-demo'
+},
   { id: 8, code: 'TN08', name: '08-vibe-architects', style: 'Industrial Brickwork', type: 'ecommerce', color: '#991b1b', progress: 75, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 9, code: 'TN09', name: '09-sunset-superfans', style: 'Japanese Zen', type: 'accommodation', color: '#16a34a', progress: 100, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
-  { id: 10, code: 'TN10', name: '10-lazy-mermaids', style: 'Modular Container', type: 'flight', color: '#ca8a04', progress: 30, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
+  { id: 10, code: 'TN10', name: '10-lazy-mermaids', style: 'Modular Container', type: 'flight', color: '#ca8a04', progress: 30, deployedUrl: 'https://b-grim-dashboard.vercel.app/', githubUrl: 'https://github.com' },
   { id: 11, code: 'TN11', name: '11-the-sharp-cuts', style: 'Mid-Century Gable', type: 'restaurant', color: '#475569', progress: 5, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 12, code: 'TN12', name: '12-coastal-avengers', style: 'Tropical Canopy', type: 'ecommerce', color: '#0d9488', progress: 95, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 13, code: 'TN13', name: '13-the-dungeon-masters', style: 'Step Architecture', type: 'accommodation', color: '#4338ca', progress: 55, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
@@ -211,6 +211,8 @@ export default function OrderDemo() {
               }
 
               const isTeam7 = house.code === "TN07";
+              const hasDeployed = house.deployedUrl && house.deployedUrl !== "https://example.com";
+              const hasGithub = house.githubUrl && house.githubUrl !== "https://github.com";
 
               return (
                 <motion.div
@@ -281,7 +283,11 @@ export default function OrderDemo() {
                       href={house.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2.5 bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-600 hover:text-stone-900 rounded-xl transition-all cursor-pointer flex items-center justify-center"
+                      className={`p-2.5 border rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                        hasGithub
+                          ? "bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-700 hover:text-emerald-900"
+                          : "bg-stone-100 hover:bg-stone-200 border-stone-200 text-stone-600 hover:text-stone-900"
+                      }`}
                       title={language === 'en' ? "View Code" : "ดูซอร์สโค้ด"}
                     >
                       <span className="font-extrabold text-[11px] font-mono">&lt;/&gt;</span>
@@ -293,7 +299,7 @@ export default function OrderDemo() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`flex-1 text-center py-2.5 text-[11px] font-extrabold rounded-xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                        isTeam7 
+                        hasDeployed 
                           ? "bg-emerald-600 hover:bg-emerald-700 border-emerald-700 text-white shadow-sm shadow-emerald-600/10" 
                           : "bg-white hover:bg-stone-50 border-stone-200 text-stone-700 hover:text-stone-900"
                       }`}
