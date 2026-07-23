@@ -8,11 +8,11 @@ import { saveBooking } from "@/lib/bookings";
 import { toast, Toaster } from "sonner";
 import PageSkeleton from "@/components/PageSkeleton";
 import SkeletonImage from "@/components/SkeletonImage";
-import botnoiAirLogo from "@/assets/BOTNOI-AIR-logo.png";
-import heroBg from "@/assets/hero-bg.jpg";
-import promoChiangmai from "@/assets/promo-chiangmai.jpg";
-import promoPhuket from "@/assets/promo-phuket.jpg";
-import promoHatyai from "@/assets/promo-hatyai.jpg";
+import botnoiAirLogo from "../assets/BOTNOI-AIR-logo.png";
+import heroBg from "../assets/hero-bg.jpg";
+import promoChiangmai from "../assets/promo-chiangmai.jpg";
+import promoPhuket from "../assets/promo-phuket.jpg";
+import promoHatyai from "../assets/promo-hatyai.jpg";
 
 const CITIES = [
   "กรุงเทพฯ (DMK)",
