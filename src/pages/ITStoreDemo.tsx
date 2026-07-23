@@ -24,9 +24,16 @@ import {
 } from "@/components/ui/dialog";
 import "./Pages.css";
 
+import huaweiMate80Pro from "../assets/huawei-mate80-pro.png";
+import huaweiMateX7 from "../assets/huawei-mate-x7.png";
+import huaweiMateXT from "../assets/huawei-mate-xt.png";
+import huaweiMateX6 from "../assets/huawei-mate-x6.png";
+import huaweiMate50 from "../assets/huawei-mate50.png";
+import huaweiMateXs2 from "../assets/huawei-mate-xs2.png";
+
 // ─── Types ─────────────────────────────────────────────────────────────────
 
-export type ITCategory = "All Products" | "Laptops" | "Monitors" | "Audio" | "Accessories";
+export type ITCategory = "All Products" | "Laptops" | "Monitors" | "Audio" | "Accessories" | "Phone";
 export type ITCart = Record<string, number>;
 
 export interface ITProduct {
@@ -116,9 +123,274 @@ const products: ITProduct[] = [
     badge: "Top Pick",
     color: "#8b5cf6",
   },
+  {
+    id: "mate80pro",
+    name: "HUAWEI Mate 80 Pro",
+    specs: '6.75" LTPO OLED · 16GB RAM · 512GB ROM · 50MP Triple Camera',
+    description:
+      "HUAWEI Mate 80 Pro มาพร้อมหน้าจอ LTPO OLED ขนาด 6.75 นิ้ว (2832×1280, 1-120Hz), ตัวเครื่องบาง 7.95 มม., มาตรฐานกันน้ำ IP68/IP69, ชิปความจุ RAM 16 GB + ROM 512 GB, แบตเตอรี่ 5,750 mAh พร้อมระบบชาร์จไว 100W",
+    category: "Phone",
+    price: 43990,
+    image: huaweiMate80Pro,
+    badge: "Hot",
+    color: "#b91c1c",
+  },
+  // Page 2 Placeholders
+  {
+    id: "laptop2",
+    name: "Botnoi LiteBook 14",
+    specs: 'Intel Core i5 · 16GB RAM · 512GB SSD · 14" IPS',
+    description: "Ultra-portable daily laptop designed for students and remote workspace flexibility.",
+    category: "Laptops",
+    price: 29900,
+    image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80&auto=format&fit=crop",
+    color: "#6366f1",
+  },
+  {
+    id: "monitor2",
+    name: "Botnoi Flat27 Monitor",
+    specs: '27" QHD IPS · 75Hz · borderless bezel',
+    description: "Perfect home-office monitor featuring true-color IPS display and eye-comfort protection mode.",
+    category: "Monitors",
+    price: 9900,
+    image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?w=600&q=80&auto=format&fit=crop",
+    color: "#06b6d4",
+  },
+  {
+    id: "matex7",
+    name: "HUAWEI Mate X7",
+    specs: '8.0" OLED Foldable · 16GB RAM · 512GB ROM · 50MP Camera',
+    description:
+      "สมาร์ทโฟนจอพับที่มาพร้อมหน้าจอหลัก OLED ขนาด 8 นิ้ว และหน้าจอนอก 6.49 นิ้ว, RAM 16 GB + ROM 512 GB, แบตเตอรี่ 5,600 mAh รองรับชาร์จไวผ่านสาย 66W และกล้องหลัง Ultra Lighting 50 MP",
+    category: "Phone",
+    price: 69990,
+    image: huaweiMateX7,
+    badge: "Premium Fold",
+    color: "#b91c1c",
+  },
+  {
+    id: "audio2",
+    name: "Botnoi SoundPod Mini",
+    specs: "Bluetooth 5.3 · IPX7 Waterproof · 10 Hours Playtime",
+    description: "Compact wireless speaker delivering surprisingly rich bass and immersive 360-degree soundstage.",
+    category: "Audio",
+    price: 1990,
+    image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&q=80&auto=format&fit=crop",
+    color: "#8b5cf6",
+  },
+  {
+    id: "acc2",
+    name: "Botnoi Wireless Charger 3-in-1",
+    specs: "15W Fast Charge · QI Certified · LED Status Indicator",
+    description: "Charge your smartphone, smartwatch, and wireless earbuds concurrently with a single premium desk stand.",
+    category: "Accessories",
+    price: 1290,
+    image: "https://images.unsplash.com/photo-1622445262465-2481c4574875?w=600&q=80&auto=format&fit=crop",
+    color: "#10b981",
+  },
+  {
+    id: "laptop3",
+    name: "Botnoi WorkStation Pro 17",
+    specs: 'Ryzen 9 · 64GB RAM · 2TB NVMe · RTX 4080 16GB',
+    description: "Mobile computing workstation tailored for 3D rendering, machine learning models, and extreme multitasking.",
+    category: "Laptops",
+    price: 129900,
+    image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=600&q=80&auto=format&fit=crop",
+    badge: "Workstation",
+    color: "#6366f1",
+  },
+  // Page 3 Placeholders
+  {
+    id: "monitor3",
+    name: "Botnoi UltraWide 34",
+    specs: '34" Curved WQHD · 165Hz · 21:9 aspect ratio',
+    description: "Panoramic ultrawide curve display. Experience next-tier timeline editing and immersive simulator gaming.",
+    category: "Monitors",
+    price: 34900,
+    image: "https://images.unsplash.com/photo-1616763355548-1b606f439f86?w=600&q=80&auto=format&fit=crop",
+    color: "#06b6d4",
+  },
+  {
+    id: "matext",
+    name: "HUAWEI Mate XT ULTIMATE DESIGN",
+    specs: '10.2" Tri-Fold OLED · Kirin 9010 · 16GB RAM · 1TB ROM · IPX8',
+    description:
+      "สมาร์ทโฟนดีไซน์หน้าจอพับ 3 ทบ (Tri-fold) จอ OLED ปรับเปลี่ยนได้ 3 ขนาด, ชิป Kirin 9010, RAM 16 GB + ROM 1 TB, ตัวเครื่องบางเพียง 3.6 มม. เมื่อกางสุด และน้ำหนัก 298 กรัม",
+    category: "Phone",
+    price: 109990,
+    image: huaweiMateXT,
+    badge: "Ultimate Tri-Fold",
+    color: "#b91c1c",
+  },
+  {
+    id: "audio3",
+    name: "Botnoi SoundBar Cinema",
+    specs: "Dolby Atmos 5.1 · Wireless Subwoofer · 400W Power Output",
+    description: "Transform your living room into a high-fidelity home cinema. Immersive surround acoustics with optical support.",
+    category: "Audio",
+    price: 14900,
+    image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=600&q=80&auto=format&fit=crop",
+    color: "#8b5cf6",
+  },
+  {
+    id: "acc3",
+    name: "Botnoi USB-C Hub 8-in-1",
+    specs: "HDMI 4K @60Hz · 100W PD · SD Card Reader · Gigabit Ethernet",
+    description: "Expand your thin laptop's port limits. Full aluminum heat dissipation shell with high-speed data lanes.",
+    category: "Accessories",
+    price: 1890,
+    image: "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=600&q=80&auto=format&fit=crop",
+    color: "#10b981",
+  },
+  {
+    id: "laptop4",
+    name: "Botnoi Book Flip 13",
+    specs: 'Intel Ultra 7 · 16GB RAM · 512GB · 13.4" Touch 360°',
+    description: "Convertible 2-in-1 touchscreen notebook. Flip, fold, sketch, and present with responsive active stylus support.",
+    category: "Laptops",
+    price: 45900,
+    image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&q=80&auto=format&fit=crop",
+    color: "#6366f1",
+  },
+  {
+    id: "monitor4",
+    name: "Botnoi Studio Display 27",
+    specs: '27" 5K Retina · 600 nits · Studio-quality microphone array',
+    description: "Elite 5K resolution display tailored for photographers, video colorists, and computational designers.",
+    category: "Monitors",
+    price: 59900,
+    image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&q=80&auto=format&fit=crop",
+    color: "#06b6d4",
+  },
+  // Page 4 Placeholders
+  {
+    id: "matex6",
+    name: "HUAWEI Mate X6",
+    specs: '7.93" OLED Foldable · Kirin 9020 · 12GB RAM · 512GB ROM',
+    description:
+      "สมาร์ทโฟนจอพับหน้าจอหลัก OLED ด้านในขนาด 7.93 นิ้ว และจอนอก 6.45 นิ้ว, ชิป Kirin 9020 ร่วมกับ RAM 12 GB + ROM 512 GB บนระบบปฏิบัติการ EMUI 15.0",
+    category: "Phone",
+    price: 59990,
+    image: huaweiMateX6,
+    color: "#b91c1c",
+  },
+  {
+    id: "audio4",
+    name: "Botnoi SoundBuds Active",
+    specs: "Hybrid ANC · IPX5 Sweat Resistant · 32 Hours Total Playback",
+    description: "True wireless athletic earbuds with secure ear-hook design. Pristine acoustics tuned for high-tempo training.",
+    category: "Audio",
+    price: 2990,
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80&auto=format&fit=crop",
+    color: "#8b5cf6",
+  },
+  {
+    id: "acc4",
+    name: "Botnoi Mechanical Keypad",
+    specs: "21-Key Numpad · Gateron Yellow Switches · Hot-Swappable",
+    description: "Programmable mechanical macro keypad. Essential side-companion for accounting audits or video layout hotkeys.",
+    category: "Accessories",
+    price: 1590,
+    image: "https://images.unsplash.com/photo-1595225476474-87563907a212?w=600&q=80&auto=format&fit=crop",
+    color: "#10b981",
+  },
+  {
+    id: "laptop5",
+    name: "Botnoi Gaming Titan 15",
+    specs: 'Intel i9 · 32GB RAM · 1TB SSD · RTX 4070 · 240Hz screen',
+    description: "High-FPS gaming laptop. Desktop-class thermal pipes ensure maximum clock performance on competitive lobbies.",
+    category: "Laptops",
+    price: 79900,
+    badge: "Gaming",
+    image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=600&q=80&auto=format&fit=crop",
+    color: "#6366f1",
+  },
+  {
+    id: "monitor5",
+    name: "Botnoi Portable Touch 15",
+    specs: '15.6" Full HD · USB-C Single-Cable · IPS Touchscreen Panel',
+    description: "Ultra-slim portable secondary monitor. Add interactive workspace screen wherever your travel office calls.",
+    category: "Monitors",
+    price: 7900,
+    image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?w=600&q=80&auto=format&fit=crop",
+    color: "#06b6d4",
+  },
+  {
+    id: "mate50",
+    name: "HUAWEI Mate 50",
+    specs: '6.7" OLED (90Hz) · Snapdragon 8+ Gen 1 · 8GB RAM · 256GB ROM',
+    description:
+      "HUAWEI Mate 50 หน้าจอ OLED ขนาด 6.7 นิ้ว, ชิปเซ็ต Snapdragon 8+ Gen 1 4G, RAM 8 GB + ROM 256 GB, แบตเตอรี่ 4,460 mAh และกล้องหลัง Ultra Aperture 50 MP",
+    category: "Phone",
+    price: 24990,
+    image: huaweiMate50,
+    color: "#b91c1c",
+  },
+  // Page 5 Placeholders
+  {
+    id: "audio5",
+    name: "Botnoi SoundBox XL Bluetooth",
+    specs: "80W Stereo · High-Res Wireless · NFC Pairing · Wooden shell",
+    description: "Acoustic wooden speaker box. Premium room aesthetics paired with warm audio resonance and long battery charge.",
+    category: "Audio",
+    price: 5990,
+    image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&q=80&auto=format&fit=crop",
+    color: "#8b5cf6",
+  },
+  {
+    id: "acc5",
+    name: "Botnoi Vertical Ergonomic Mouse",
+    specs: "57-degree angle · 4000 DPI · Bluetooth/2.4GHz rechargeable",
+    description: "Scientifically tested vertical grip. Relieve forearm stress and wrist muscle fatigue during long office sessions.",
+    category: "Accessories",
+    price: 2490,
+    image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&q=80&auto=format&fit=crop",
+    color: "#10b981",
+  },
+  {
+    id: "laptop6",
+    name: "Botnoi NetBook Cloud",
+    specs: 'Celeron N4020 · 4GB RAM · 64GB eMMC · 11.6" Screen',
+    description: "Featherweight cloud computing notebook. Long battery life tailored for browser work, email check, and reading.",
+    category: "Laptops",
+    price: 12900,
+    image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80&auto=format&fit=crop",
+    color: "#6366f1",
+  },
+  {
+    id: "monitor6",
+    name: "Botnoi Smart TV Monitor 43",
+    specs: '43" UHD 4K · Integrated Tizen Smart Hub · Remote control',
+    description: "Huge multipurpose smart screen. Switch instantly from workstation monitor to media streaming applications.",
+    category: "Monitors",
+    price: 18900,
+    image: "https://images.unsplash.com/photo-1616763355548-1b606f439f86?w=600&q=80&auto=format&fit=crop",
+    color: "#06b6d4",
+  },
+  {
+    id: "matexs2",
+    name: "HUAWEI Mate Xs 2",
+    specs: '7.8" Outward Fold OLED · Snapdragon 888 4G · 8GB RAM · 512GB ROM',
+    description:
+      "สมาร์ทโฟนจอพับพับออกนอก (Falcon Wing Design) หน้าจอ OLED 7.8 นิ้ว, ชิปเซ็ต Snapdragon 888 4G, RAM 8 GB + ROM 512 GB, กล้องหลัก True-Chroma 50 MP",
+    category: "Phone",
+    price: 39990,
+    image: huaweiMateXs2,
+    color: "#b91c1c",
+  },
+  {
+    id: "audio6",
+    name: "Botnoi SoundStudio Pro",
+    specs: "50mm Drivers · Wired Over-Ear · Studio Monitor acoustics",
+    description: "Flat-response acoustic mixing headphones. Ultra-comfortable velour pads for studio engineering sessions.",
+    category: "Audio",
+    price: 8900,
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80&auto=format&fit=crop",
+    color: "#8b5cf6",
+  },
 ];
 
-const categories: ITCategory[] = ["All Products", "Laptops", "Monitors", "Audio", "Accessories"];
+const categories: ITCategory[] = ["All Products", "Laptops", "Monitors", "Audio", "Accessories", "Phone"];
 
 const money = new Intl.NumberFormat("th-TH", {
   style: "currency",
@@ -129,10 +401,28 @@ const money = new Intl.NumberFormat("th-TH", {
 // ─── Component ──────────────────────────────────────────────────────────────
 export default function ITStoreDemo() {
   const { t, language } = useTranslation();
+
+  const getProductTranslation = (id: string, field: "name" | "specs" | "desc", fallback: string) => {
+    const key = `itstore_item.${id}.${field}` as TranslationKey;
+    const translated = t(key);
+    return translated === key ? fallback : translated;
+  };
+
   const [activeCategory, setActiveCategory] = useState<ITCategory>("All Products");
   const [cart, setCart] = useState<ITCart>({});
   const [order, setOrder] = useState<ITOrder | null>(null);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedProducts, setExpandedProducts] = useState<Record<string, boolean>>({});
+
+  const toggleExpand = (productId: string) => {
+    setExpandedProducts((prev) => ({ ...prev, [productId]: !prev[productId] }));
+  };
+
+  // Reset page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory]);
   const [ready, setReady] = useState(false);
   const cartRef = useRef<HTMLElement>(null);
 
@@ -157,6 +447,13 @@ export default function ITStoreDemo() {
     activeCategory === "All Products"
       ? products
       : products.filter((p) => p.category === activeCategory);
+
+  const totalPages = Math.ceil(visibleProducts.length / 6);
+
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * 6;
+    return visibleProducts.slice(start, start + 6);
+  }, [visibleProducts, currentPage]);
 
   const cartItems = useMemo(
     () =>
@@ -211,6 +508,7 @@ export default function ITStoreDemo() {
       case "Monitors": return t("itstore.category_monitors");
       case "Audio": return t("itstore.category_audio");
       case "Accessories": return t("itstore.category_accessories");
+      case "Phone": return t("itstore.category_phone");
     }
   };
 
@@ -364,7 +662,7 @@ export default function ITStoreDemo() {
                       textAlign: "center", lineHeight: 1.3,
                     }}
                   >
-                    {p.name}
+                    {getProductTranslation(p.id, "name", p.name)}
                   </div>
                 </motion.div>
               ))}
@@ -422,8 +720,8 @@ export default function ITStoreDemo() {
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 gap-5"
             >
-              <AnimatePresence>
-                {visibleProducts.map((product) => {
+              <AnimatePresence mode="popLayout">
+                {paginatedProducts.map((product) => {
                   const qty = cart[product.id] ?? 0;
                   const inCart = qty > 0;
                   return (
@@ -441,13 +739,13 @@ export default function ITStoreDemo() {
                       >
                         {/* Image */}
                         <div
-                          className="relative overflow-hidden"
+                          className="relative overflow-hidden p-4"
                           style={{ height: 200, background: "#f8fafc" }}
                         >
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src =
@@ -497,17 +795,48 @@ export default function ITStoreDemo() {
                         <div className="flex flex-col flex-1 p-5 gap-3">
                           <div>
                             <h3 className="font-extrabold text-slate-900 text-base leading-tight mb-1">
-                              {product.name}
+                              {getProductTranslation(product.id, "name", product.name)}
                             </h3>
                             <p
                               className="text-xs font-semibold mb-2"
                               style={{ color: product.color }}
                             >
-                              {t("itstore.speci")}: {product.specs}
+                              {t("itstore.speci")}: {getProductTranslation(product.id, "specs", product.specs)}
                             </p>
-                            <p className="text-sm text-slate-500 leading-relaxed">
-                              {product.description}
-                            </p>
+                             <div>
+                              <p className="text-sm text-slate-500 leading-relaxed inline">
+                                {(() => {
+                                  const desc = getProductTranslation(product.id, "desc", product.description);
+                                  const isExpanded = expandedProducts[product.id];
+                                  if (desc.length > 110 && !isExpanded) {
+                                    return (
+                                      <>
+                                        {desc.slice(0, 110)}...{" "}
+                                        <button
+                                          onClick={() => toggleExpand(product.id)}
+                                          className="text-xs font-bold text-indigo-600 hover:text-indigo-850 transition ml-1 inline cursor-pointer"
+                                        >
+                                          {t("itstore.read_more" as TranslationKey)}
+                                        </button>
+                                      </>
+                                    );
+                                  }
+                                  return (
+                                    <>
+                                      {desc}{" "}
+                                      {desc.length > 110 && (
+                                        <button
+                                          onClick={() => toggleExpand(product.id)}
+                                          className="text-xs font-bold text-indigo-600 hover:text-indigo-850 transition ml-1 inline cursor-pointer"
+                                        >
+                                          {t("itstore.read_less" as TranslationKey)}
+                                        </button>
+                                      )}
+                                    </>
+                                  );
+                                })()}
+                              </p>
+                            </div>
                           </div>
 
                           <div className="mt-auto flex items-center justify-between gap-3">
@@ -539,6 +868,57 @@ export default function ITStoreDemo() {
                 })}
               </AnimatePresence>
             </motion.div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-12 flex items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full w-10 h-10 flex items-center justify-center border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={currentPage === 1}
+                  onClick={() => {
+                    setCurrentPage(prev => Math.max(1, prev - 1));
+                    document.getElementById('itstore-products')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  &larr;
+                </Button>
+                {Array.from({ length: totalPages }).map((_, idx) => {
+                  const pageNum = idx + 1;
+                  const active = currentPage === pageNum;
+                  return (
+                    <button
+                      key={pageNum}
+                      className={`w-10 h-10 rounded-full text-sm font-bold transition-all border cursor-pointer ${
+                        active
+                          ? "border-transparent text-white"
+                          : "text-slate-500 border-slate-200 hover:text-slate-800 hover:bg-slate-50"
+                      }`}
+                      style={active ? { background: "linear-gradient(135deg,#6366f1,#8b5cf6)" } : {}}
+                      onClick={() => {
+                        setCurrentPage(pageNum);
+                        document.getElementById('itstore-products')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full w-10 h-10 flex items-center justify-center border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={currentPage === totalPages}
+                  onClick={() => {
+                    setCurrentPage(prev => Math.min(totalPages, prev + 1));
+                    document.getElementById('itstore-products')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  &rarr;
+                </Button>
+              </div>
+            )}
           </section>
 
           {/* ── Cart Sidebar ─────────────────────────────────────────────── */}
@@ -601,7 +981,9 @@ export default function ITStoreDemo() {
                             }}
                           />
                           <div className="flex-1 min-w-0">
-                            <div className="font-bold text-slate-900 text-xs leading-tight truncate">{item.name}</div>
+                            <div className="font-bold text-slate-900 text-xs leading-tight truncate">
+                              {getProductTranslation(item.id, "name", item.name)}
+                            </div>
                             <div className="text-xs text-slate-400 mt-0.5">{money.format(item.price)}</div>
                           </div>
                           <div className="flex items-center gap-1.5">
@@ -682,7 +1064,9 @@ export default function ITStoreDemo() {
                         loading="lazy"
                       />
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs font-bold text-slate-900 leading-tight truncate">{item.name}</div>
+                        <div className="text-xs font-bold text-slate-900 leading-tight truncate">
+                          {getProductTranslation(item.id, "name", item.name)}
+                        </div>
                         <div className="text-xs text-slate-400">{money.format(item.price)} × {item.quantity}</div>
                       </div>
                       <div className="text-xs font-extrabold" style={{ color: "#6366f1" }}>
