@@ -173,7 +173,7 @@ export default function Home() {
             <p>
               {t('home.card_food_desc')}
             </p>
-            <Link className="bento-card-footer" to="/food-demo" id="link-order-demo">
+            <Link className="bento-card-footer" to="/all-demo" id="link-order-demo">
               {t('home.card_food_cta')} <span aria-hidden="true">→</span>
             </Link>
           </div>

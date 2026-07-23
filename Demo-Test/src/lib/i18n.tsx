@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { translateApi } from "./api/translation.functions";
+import { offlineTranslate } from "./api/translation.server";
 
 export type Language = "th" | "en" | "zh";
 
@@ -43,9 +44,11 @@ const uiDictionary: Record<string, Record<Language, string>> = {
   "Translate Engine": { th: "Translate Engine", en: "Translate Engine", zh: "翻译引擎" },
   "สวัสดี, ยินดีต้อนรับ": { th: "สวัสดี, ยินดีต้อนรับ", en: "Hello, Welcome", zh: "您好，欢迎光临" },
   "เลือกประสบการณ์การรับประทาน": { th: "เลือกประสบการณ์การรับประทาน", en: "Choose your dining experience", zh: "选择您的用餐体验" },
+  "เลือกประสบการณ์การรับประทานอาหารพรีเมียม": { th: "เลือกประสบการณ์การรับประทานอาหารพรีเมียม", en: "Choose your premium dining experience", zh: "选择您的尊享用餐体验" },
   "เปิดบริการ": { th: "เปิดบริการ", en: "Open", zh: "营业中" },
   "ปิดบริการ": { th: "ปิดบริการ", en: "Closed", zh: "已关店" },
   "สั่งอาหาร": { th: "สั่งอาหาร", en: "Order Now", zh: "开始点餐" },
+  "สั่งอาหารทันที": { th: "สั่งอาหารทันที", en: "Order Now", zh: "立即点餐" },
   "ช่องทางการรับอาหาร": { th: "ช่องทางการรับอาหาร", en: "Dining Option", zh: "用餐方式" },
   "(กรุณาเลือกช่องทางการรับอาหารด้านบนเพื่อระบุรายละเอียด)": { th: "(กรุณาเลือกช่องทางการรับอาหารด้านบนเพื่อระบุรายละเอียด)", en: "(Please select dining option above to specify details)", zh: "(请在上方选择用餐方式以填写详情)" },
   "* กรุณาเลือกช่องทางการรับอาหาร (ทานที่ร้าน, จัดส่งถึงที่ หรือ รับกลับบ้าน) ก่อนเริ่มสั่งซื้อ": { th: "* กรุณาเลือกช่องทางการรับอาหาร (ทานที่ร้าน, จัดส่งถึงที่ หรือ รับกลับบ้าน) ก่อนเริ่มสั่งซื้อ", en: "* Please select dining channel (dine-in, delivery, or takeaway) before ordering", zh: "* 下单前请选择用餐方式（堂食、外送或外带）" },
@@ -56,6 +59,7 @@ const uiDictionary: Record<string, Record<Language, string>> = {
   "ค้นหาเมนู...": { th: "ค้นหาเมนู...", en: "Search menu...", zh: "搜索菜单..." },
   "เลือกประเภทอาหาร": { th: "เลือกประเภทอาหาร", en: "Select category", zh: "选择食物类别" },
   "เมนูแนะนำ": { th: "เมนูแนะนำ", en: "Recommended Menus", zh: "推荐菜单" },
+  "รายการอาหารทั้งหมด": { th: "รายการอาหารทั้งหมด", en: "All Food Items", zh: "所有美食菜单" },
   "ทั้งหมด": { th: "ทั้งหมด", en: "All", zh: "全部" },
   "Signature": { th: "Signature", en: "Signature", zh: "招牌" },
   "อาหารจานเดียว": { th: "อาหารจานเดียว", en: "Main Dish", zh: "单人餐" },
@@ -64,6 +68,20 @@ const uiDictionary: Record<string, Record<Language, string>> = {
   "มังสวิรัติ": { th: "มังสวิรัติ", en: "Vegetarian", zh: "素食" },
   "เครื่องดื่ม": { th: "เครื่องดื่ม", en: "Drinks", zh: "饮料" },
   "ของหวาน": { th: "ของหวาน", en: "Dessert", zh: "甜点" },
+
+  // Seating Chart & Table Modal
+  "เลือกโต๊ะอาหาร": { th: "เลือกโต๊ะอาหาร", en: "Select Dining Table", zh: "选择用餐桌号" },
+  "ผังที่นั่ง": { th: "ผังที่นั่ง", en: "Seating Chart", zh: "座位图" },
+  "เลือกโต๊ะ": { th: "เลือกโต๊ะ", en: "Select Table", zh: "选择桌号" },
+  "เปลี่ยนโต๊ะ": { th: "เปลี่ยนโต๊ะ", en: "Change Table", zh: "更换桌号" },
+  "โต๊ะ": { th: "โต๊ะ", en: "Table", zh: "桌" },
+  "ว่าง": { th: "ว่าง", en: "Available", zh: "空闲" },
+  "ไม่ว่าง": { th: "ไม่ว่าง", en: "Occupied", zh: "使用中" },
+  "เลือกแล้ว": { th: "เลือกแล้ว", en: "Selected", zh: "已选择" },
+  "ความจุ 2-4 คน": { th: "ความจุ 2-4 คน", en: "Capacity 2-4 people", zh: "可容纳 2-4 人" },
+  "หน้าร้านเท่านั้น": { th: "หน้าร้านเท่านั้น", en: "In-store Only", zh: "仅限店内" },
+  "สัญลักษณ์สถานะ:": { th: "สัญลักษณ์สถานะ:", en: "Status Legend:", zh: "状态说明：" },
+  "ไม่พบข้อมูลโต๊ะ": { th: "ไม่พบข้อมูลโต๊ะ", en: "No table data found", zh: "未找到桌号数据" },
 
   // Cart & Orders
   "รถเข็น": { th: "รถเข็น", en: "Cart", zh: "购物车" },
@@ -100,7 +118,7 @@ const uiDictionary: Record<string, Record<Language, string>> = {
   "ชำระเงิน": { th: "ชำระเงิน", en: "Pay Now", zh: "立即支付" },
   "ยกเลิก": { th: "ยกเลิก", en: "Cancel", zh: "取消" },
 
-  // Order Details / Status
+  // Order Details / Status / Staff
   "รายละเอียดออเดอร์": { th: "รายละเอียดออเดอร์", en: "Order Details", zh: "订单详情" },
   "สถานะออเดอร์": { th: "สถานะออเดอร์", en: "Order Status", zh: "订单状态" },
   "รอดำเนินการ": { th: "รอดำเนินการ", en: "Pending", zh: "等待确认" },
@@ -110,8 +128,12 @@ const uiDictionary: Record<string, Record<Language, string>> = {
   "ยกเลิกแล้ว": { th: "ยกเลิกแล้ว", en: "Cancelled", zh: "已取消" },
   "ขอคืนเงิน": { th: "ขอคืนเงิน", en: "Refund Requested", zh: "申请退款" },
   "รอรับออเดอร์": { th: "รอรับออเดอร์", en: "Awaiting Confirmation", zh: "等待接单" },
+  "ออเดอร์ใหม่": { th: "ออเดอร์ใหม่", en: "New Orders", zh: "新订单" },
+  "กำลังปรุง": { th: "กำลังปรุง", en: "Cooking", zh: "正在烹饪" },
+  "เริ่มทำครัว": { th: "เริ่มทำครัว", en: "Start Cooking", zh: "开始制作" },
+  "ปรุงสำเร็จ": { th: "ปรุงสำเร็จ", en: "Finish Cooking", zh: "制作完成" },
+  "ส่งเสิร์ฟสำเร็จ": { th: "ส่งเสิร์ฟสำเร็จ", en: "Served", zh: "上菜完成" },
   "คิว": { th: "คิว", en: "Queue", zh: "排队号" },
-  "โต๊ะ": { th: "โต๊ะ", en: "Table", zh: "桌号" },
   "วันเวลาที่สั่ง": { th: "วันเวลาที่สั่ง", en: "Order Date/Time", zh: "下单时间" },
   "หมายเลขออเดอร์": { th: "หมายเลขออเดอร์", en: "Order Number", zh: "订单编号" },
   "ติดตามออเดอร์": { th: "ติดตามออเดอร์", en: "Track Order", zh: "追踪订单" },
@@ -167,6 +189,15 @@ const uiDictionary: Record<string, Record<Language, string>> = {
   "ไข่ต้ม": { th: "ไข่ต้ม", en: "Boiled Egg", zh: "水煮蛋" },
   "ไข่เจียว": { th: "ไข่เจียว", en: "Omelet", zh: "煎蛋卷" },
   "ไข่ดาว": { th: "ไข่ดาว", en: "Fried Egg", zh: "荷包蛋" },
+
+  // Translation Box & UI Controls
+  "แปลภาษา (Translate)": { th: "แปลภาษา (Translate)", en: "Translate", zh: "翻译" },
+  "ภาษาต้นทาง (Source)": { th: "ภาษาต้นทาง (Source)", en: "Source Language", zh: "源语言" },
+  "ภาษาปลายทาง (Target)": { th: "ภาษาปลายทาง (Target)", en: "Target Language", zh: "目标语言" },
+  "คัดลอก (Copy)": { th: "คัดลอก (Copy)", en: "Copy", zh: "复制" },
+  "คัดลอกแล้ว": { th: "คัดลอกแล้ว", en: "Copied!", zh: "已复制！" },
+  "พิมพ์ข้อความที่ต้องการแปลที่นี่...": { th: "พิมพ์ข้อความที่ต้องการแปลที่นี่...", en: "Type text to translate here...", zh: "在此输入需要翻译的文本..." },
+  "ผลลัพธ์คำแปลจะแสดงผลตรงนี้...": { th: "ผลลัพธ์คำแปลจะแสดงผลตรงนี้...", en: "Translation result will appear here...", zh: "翻译结果将在此显示..." },
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -407,35 +438,57 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Translation helper for Menus (returns name or description)
   const tMenu = (text: string, field: "name" | "desc" = "name"): string => {
-    if (language === "th") return text;
+    if (!text || language === "th") return text || "";
     
-    // Check if the exact menu item exists in menuDictionary
-    let cleanKey = text;
+    const cleanKey = text.trim();
+
+    // 1. Direct match in menuDictionary
     let foundEntry = menuDictionary[cleanKey];
 
-    // If we're looking for description, we find by the menu name key
+    // 2. If field is "desc" and not found directly, search by Thai description
     if (!foundEntry && field === "desc") {
-      // Find the menu name that has this description in Thai
       const matchedName = Object.keys(menuDictionary).find(
-        (k) => menuDictionary[k].th.desc === text
+        (k) => menuDictionary[k].th.desc === text || menuDictionary[k].th.desc === cleanKey
       );
       if (matchedName) {
-        cleanKey = matchedName;
-        foundEntry = menuDictionary[cleanKey];
+        foundEntry = menuDictionary[matchedName];
+      }
+    }
+
+    // 3. Substring/fuzzy match in menuDictionary
+    if (!foundEntry) {
+      const matchedKey = Object.keys(menuDictionary).find(
+        (k) => k === cleanKey || cleanKey.includes(k) || k.includes(cleanKey)
+      );
+      if (matchedKey) {
+        foundEntry = menuDictionary[matchedKey];
       }
     }
 
     if (foundEntry && foundEntry[language]) {
-      return foundEntry[language][field];
+      return foundEntry[language][field] || text;
     }
 
-    // If not found in static dictionary, treat it as general UI text (which does dynamic translate)
-    const cacheKey = `${language}:${text}`;
+    // 4. Fallback to uiDictionary
+    if (uiDictionary[cleanKey] && uiDictionary[cleanKey][language]) {
+      return uiDictionary[cleanKey][language];
+    }
+
+    // 5. Fallback search in uiDictionary for partial key match
+    const uiMatchKey = Object.keys(uiDictionary).find(
+      (k) => k === cleanKey || (k.length > 2 && (cleanKey.includes(k) || k.includes(cleanKey)))
+    );
+    if (uiMatchKey && uiDictionary[uiMatchKey][language]) {
+      return uiDictionary[uiMatchKey][language];
+    }
+
+    // 6. Check dynamic cache
+    const cacheKey = `${language}:${cleanKey}`;
     if (localCache[cacheKey]) {
       return localCache[cacheKey];
     }
 
-    triggerAsyncTranslation(text);
+    triggerAsyncTranslation(cleanKey);
 
     return text;
   };
@@ -450,17 +503,28 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setLoadingLanguages((prev) => ({ ...prev, [cacheKey]: true }));
 
     try {
-      console.log(`[i18n] Translating dynamically to ${language}:`, text);
-      const res = await translateApi({
-        data: {
-          text,
-          sourceLang: "auto",
-          targetLang: language,
-        },
-      });
+      let translated = "";
+      try {
+        const res = await translateApi({
+          data: {
+            text,
+            sourceLang: "auto",
+            targetLang: language,
+          },
+        });
+        if (res && res.translatedText) {
+          translated = res.translatedText;
+        }
+      } catch {
+        translated = offlineTranslate(text, language);
+      }
 
-      if (res && res.translatedText) {
-        const updatedCache = { ...localCache, [cacheKey]: res.translatedText };
+      if (!translated) {
+        translated = offlineTranslate(text, language);
+      }
+
+      if (translated) {
+        const updatedCache = { ...localCache, [cacheKey]: translated };
         setLocalCache(updatedCache);
         if (typeof window !== "undefined") {
           localStorage.setItem(dynamicCacheKey, JSON.stringify(updatedCache));

@@ -24,7 +24,7 @@ const pageComponents: Record<string, ReactNode> = {
   '/about': <About />,
   '/contact': <Contact />,
   '/flight-demo': <FlightDemo />,
-  '/food-demo': <OrderDemo />,
+  '/all-demo': <OrderDemo />,
   '/it-store-demo': <ITStoreDemo />,
   '/nia-site-2026': <NiaSite2026 />,
 };
@@ -65,7 +65,7 @@ function App() {
               <Routes>
                 {/* Static admin/support routes */}
                 <Route path="/flight-demo/admin" element={<FlightAdmin />} />
-                <Route path="/food-demo/admin" element={<OrderAdmin />} />
+                <Route path="/all-demo/admin" element={<OrderAdmin />} />
                 <Route path="/it-store-demo/admin" element={<ITStoreAdmin />} />
 
                 {/* Dynamic pages based on pagesConfig */}

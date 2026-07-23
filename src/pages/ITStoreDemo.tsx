@@ -1,18 +1,18 @@
 import {
   Check,
   ChevronRight,
-  Cpu,
   Minus,
   Plus,
   ReceiptText,
   ShoppingCart,
   Trash2,
   Zap,
+  Home,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation } from "@/lib/LanguageContext";
+import { useTranslation, type TranslationKey } from "@/lib/LanguageContext";
 import PageSkeleton from "@/components/PageSkeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -521,32 +521,23 @@ export default function ITStoreDemo() {
       <div className="itstore-theme min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground page-grid">
 
         {/* ── Header ─────────────────────────────────────────────────────── */}
-        <header className="relative z-20 border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0">
-          <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between gap-4">
-            {/* Brand */}
-            <Link to="/it-store-demo" className="flex items-center gap-2.5 flex-shrink-0">
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 10,
-                  background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Cpu size={20} color="white" />
-              </div>
-              <div>
-                <div className="font-extrabold text-slate-900 text-base leading-tight tracking-tight">
-                  Botnoi IT Shop
-                </div>
-                <div className="text-xs text-slate-400 font-medium">Tech E-Commerce Demo</div>
-              </div>
-            </Link>
+        <header className="sticky top-4 z-20 mx-auto my-4 w-[calc(100%-2rem)] max-w-7xl bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl shadow-lg transition-all">
+          <div className="px-6 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <nav className="flex items-center gap-2 text-xs text-slate-500 font-bold" aria-label="Breadcrumb">
+              <Link to="/" className="hover:text-indigo-600 transition-colors flex items-center gap-1">
+                <Home className="size-3" />
+                <span>{t('nav.home')}</span>
+              </Link>
+              <ChevronRight className="size-3 text-slate-400" />
+              <Link to="/all-demo" className="hover:text-indigo-600 transition-colors">
+                <span>{t('showcase.portal')}</span>
+              </Link>
+              <ChevronRight className="size-3 text-slate-400" />
+              <span className="text-slate-800 font-extrabold uppercase font-mono">
+                {t("nav.itstore") || 'IT Store'}
+              </span>
+            </nav>
 
-            {/* Nav actions */}
             <nav className="flex items-center gap-3 text-sm font-semibold">
               {order && (
                 <Button

@@ -9,28 +9,44 @@
   isolation: isolate;
 }
 
-/* Glassmorphic Premium Navbar */
+/* Glassmorphic Premium Navbar (Floating Card) */
 .navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%) translate3d(0, 0, 0);
+  width: calc(100% - 2.5rem);
+  max-width: 1440px;
   z-index: 100;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  padding: 1rem 3rem;
+  padding: 0.85rem 2.5rem;
   background: rgba(250, 251, 252, 0.75);
   backdrop-filter: blur(20px) saturate(190%);
   -webkit-backdrop-filter: blur(20px) saturate(190%);
-  border-bottom: 1px solid rgba(228, 228, 231, 0.6);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02), 0 4px 20px -2px rgba(99, 102, 241, 0.02);
-  transition: padding 0.3s ease, background-color 0.3s ease;
-  transform: translate3d(0, 0, 0);
+  border: 1px solid rgba(228, 228, 231, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.08), 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+  transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              top 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   min-width: 0;
   gap: 0.75rem;
+}
+
+.navbar-scrolled {
+  top: 0.65rem;
+  width: calc(100% - 1.5rem);
+  padding: 0.65rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.12), 0 2px 5px 0 rgba(0, 0, 0, 0.03);
 }
 
 .navbar.sandbox-navbar {
@@ -91,23 +107,25 @@
   padding-left: 0.75rem;
 }
 
-/* Desktop nav links */
+/* Desktop nav links occupy the space between the logo and CTA. */
 .navbar>nav {
-  flex: 1;
+  display: flex;
+  justify-content: center;
   min-width: 0;
-  overflow: visible; /* Prevent clipping of dropdown overlays */
-  text-align: center;
+  overflow: visible;
 }
 
 .nav-links {
   list-style: none;
   display: inline-flex;
   align-items: center;
-  gap: 1.75rem;
+  gap: 1.5rem;
   margin: 0;
-  padding: 0 16px;
+  padding: 0 12px;
   white-space: nowrap;
   flex-wrap: nowrap;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .nav-item {
@@ -146,8 +164,9 @@
 .navbar-cta {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-shrink: 0;
+  margin-left: 0;
 }
 
 /* Floating Widget Assistant Notification bar */
@@ -445,13 +464,13 @@
 /* ═══════════════════════════════════════
    Responsive Breakpoints
    ═══════════════════════════════════════ */
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   .navbar {
     padding: 0.85rem 2rem;
   }
 
   .nav-links {
-    gap: 1.5rem;
+    gap: 1.1rem;
   }
 
   .logo-subtitle {
@@ -463,7 +482,9 @@
   }
 }
 
-@media (max-width: 985px) {
+/* The navbar is capped at 1200px, so long localized labels need the drawer
+   before the viewport reaches the general tablet breakpoint. */
+@media (max-width: 1400px) {
   .navbar {
     padding: 0.75rem 1.25rem;
   }
@@ -853,10 +874,11 @@
 /* Elegant dropdown overlay box */
 .dropdown-overlay {
   position: absolute;
-  top: calc(100% - 2px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
+  top: calc(100% + 6px);
+  right: 0;
+  left: auto;
+  transform: none;
+  width: 290px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px) saturate(190%);
   -webkit-backdrop-filter: blur(20px) saturate(190%);

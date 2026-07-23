@@ -25,7 +25,30 @@ export default function OrderAdmin() {
       if (savedOrders) {
         setOrders(JSON.parse(savedOrders));
       } else {
-        setOrders([]);
+        const defaultDemoOrders: Receipt[] = [
+          {
+            orderId: "AK-1001",
+            orderedAt: new Date().toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" }) + " · " + new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
+            items: [
+              {
+                id: "krapao",
+                name: "ข้าวกะเพราไก่ไข่ดาว",
+                nameTh: "ข้าวกะเพราไก่ไข่ดาว",
+                nameEn: "Chicken Pad Kra Pao",
+                descTh: "",
+                descEn: "",
+                category: "เมนูยอดนิยม",
+                price: 89,
+                quantity: 2
+              }
+            ],
+            subtotal: 178,
+            serviceFee: 10,
+            total: 188
+          }
+        ];
+        window.localStorage.setItem(ORDERS_KEY, JSON.stringify(defaultDemoOrders));
+        setOrders(defaultDemoOrders);
       }
     } catch (e) {
       console.error("Failed to load orders", e);
@@ -35,6 +58,26 @@ export default function OrderAdmin() {
 
   useEffect(() => {
     loadOrders();
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === ORDERS_KEY) {
+        loadOrders();
+      }
+    };
+
+    const handleCustomEvent = () => {
+      loadOrders();
+    };
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("local_order_placed", handleCustomEvent);
+    const interval = setInterval(loadOrders, 2000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("local_order_placed", handleCustomEvent);
+      clearInterval(interval);
+    };
   }, []);
 
   const clearOrders = () => {
@@ -53,7 +96,7 @@ export default function OrderAdmin() {
               {language === 'en' ? "Botnoi Restaurant · Kitchen Monitor" : "Botnoi Restaurant · บอร์ดจัดการห้องครัว"}
             </span>
           </div>
-          <Link to="/food-demo" className="text-xs font-bold opacity-80 hover:opacity-100 transition-opacity hover:underline">
+          <Link to="/all-demo" className="text-xs font-bold opacity-80 hover:opacity-100 transition-opacity hover:underline">
             {t("nav.back_to_main")}
           </Link>
         </div>

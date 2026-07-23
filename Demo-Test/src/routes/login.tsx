@@ -230,13 +230,9 @@ function LoginPage() {
 
       {/* Frame */}
       <div
-        className="relative flex flex-col overflow-hidden"
+        className="relative flex flex-col overflow-hidden w-full max-w-[450px] min-h-screen sm:min-h-[750px] sm:my-8 sm:rounded-3xl sm:shadow-2xl"
         style={{
-          width: "min(430px, 100vw)",
-          minHeight: "min(932px, 100vh)",
-          borderRadius: 28,
           background: LINEN,
-          boxShadow: "0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)",
           zIndex: 1,
         }}
       >

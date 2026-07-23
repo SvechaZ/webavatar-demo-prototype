@@ -405,11 +405,7 @@ function AdminDashboard() {
     }
   }, [view, checkingAuth]);
 
-  // Handle Logout
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate({ to: "/login" });
-  };
+
 
   // Role modification handlers
   const updateUserRole = async (userId: string, newRole: "admin" | "staff" | "customer") => {
@@ -600,12 +596,6 @@ function AdminDashboard() {
           </button>
           <span className="font-black text-sm tracking-wide">หลังบ้านผู้ดูแลระบบ (Admin)</span>
         </div>
-        <button 
-          onClick={handleLogout}
-          className="text-red-300 font-bold text-xs"
-        >
-          ออก
-        </button>
       </header>
 
       {/* ── Mobile Navigation Drawer ── */}
@@ -626,7 +616,7 @@ function AdminDashboard() {
               transition={{ type: "tween", duration: 0.2 }}
               className="fixed top-0 left-0 bottom-0 w-64 bg-[#002e47] text-white z-50 flex flex-col p-5 shadow-2xl"
             >
-              <AdminSidebarContent view={view} setView={setView} setSidebarOpen={setSidebarOpen} handleLogout={handleLogout} />
+              <AdminSidebarContent view={view} setView={setView} setSidebarOpen={setSidebarOpen} />
             </motion.aside>
           </>
         )}
@@ -634,7 +624,7 @@ function AdminDashboard() {
 
       {/* ── Desktop Left Sidebar ── */}
       <aside className="hidden md:flex flex-col w-72 h-screen shrink-0 bg-[#002e47] text-white border-r border-[#ece4d6] shadow-md z-20">
-        <AdminSidebarContent view={view} setView={setView} handleLogout={handleLogout} />
+        <AdminSidebarContent view={view} setView={setView} />
       </aside>
 
       {/* ── Main content view area ── */}
@@ -647,18 +637,16 @@ function AdminDashboard() {
               <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#002e47] text-white shadow-md">
                 {view === "dashboard" ? (
                   <LayoutDashboard size={18} className="text-[#fcc14a]" />
-                ) : view === "inventory" ? (
-                  <ClipboardList size={18} className="text-[#fcc14a]" />
                 ) : (
-                  <Users size={18} className="text-[#fcc14a]" />
+                  <ClipboardList size={18} className="text-[#fcc14a]" />
                 )}
               </div>
               <div>
                 <h1 className="text-lg font-black text-[#002e47] tracking-tight">
-                  {view === "dashboard" ? "รายงานยอดขาย & ประวัติ" : view === "inventory" ? "จัดการคลังสต็อก & เมนู" : "จัดการระดับพนักงาน"}
+                  {view === "dashboard" ? "รายงานยอดขาย & ประวัติ" : "จัดการคลังสต็อก & เมนู"}
                 </h1>
                 <p className="text-xs text-slate-500 font-semibold">
-                  {view === "dashboard" ? "วิเคราะห์ยอดขายสะสม ยอดสั่งซื้อ และรายรับทั้งหมดของร้าน" : view === "inventory" ? "เปิดปิดเมนูอาหาร ปรับปรุงจำนวนสต็อกวัตถุดิบหน้าร้าน" : "จัดการและเปลี่ยนบทบาทสิทธิ์ (Admin / Staff / Customer) ในระบบ"}
+                  {view === "dashboard" ? "วิเคราะห์ยอดขายสะสม ยอดสั่งซื้อ และรายรับทั้งหมดของร้าน" : "เปิดปิดเมนูอาหาร ปรับปรุงจำนวนสต็อกวัตถุดิบหน้าร้าน"}
                 </p>
               </div>
             </div>
@@ -717,15 +705,6 @@ function AdminDashboard() {
               setIngredients={setIngredients}
             />
           )}
-          {view === "staff" && (
-            <AdminStaffView 
-              users={users} 
-              loading={loadingUsers} 
-              updateUserRole={updateUserRole}
-              toggleUserActiveStatus={toggleUserActiveStatus}
-              deleteUser={deleteUser}
-            />
-          )}
         </div>
       </main>
     </div>
@@ -736,13 +715,11 @@ function AdminDashboard() {
 function AdminSidebarContent({ 
   view, 
   setView, 
-  setSidebarOpen, 
-  handleLogout 
+  setSidebarOpen 
 }: { 
   view: string; 
   setView: (v: any) => void; 
   setSidebarOpen?: (b: boolean) => void; 
-  handleLogout: () => void;
 }) {
   const selectTab = (v: any) => {
     setView(v);
@@ -772,7 +749,7 @@ function AdminSidebarContent({
           onClick={() => selectTab("dashboard")}
           className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-left transition duration-200 cursor-pointer ${
             view === "dashboard" 
-              ? "bg-white/10 text-white font-black border-l-4 border-[#fcc14a]" 
+              ? "bg-white/10 text-[#fcc14a] font-black border-l-4 border-[#fcc14a]" 
               : "text-white/70 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
           }`}
         >
@@ -784,36 +761,20 @@ function AdminSidebarContent({
           onClick={() => selectTab("inventory")}
           className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-left transition duration-200 cursor-pointer ${
             view === "inventory" 
-              ? "bg-white/10 text-white font-black border-l-4 border-[#fcc14a]" 
+              ? "bg-white/10 text-[#fcc14a] font-black border-l-4 border-[#fcc14a]" 
               : "text-white/70 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
           }`}
         >
           <ClipboardList size={18} className={view === "inventory" ? "text-[#fcc14a]" : "text-white/60"} />
           <span className="text-sm">จัดการคลัง & สต็อก</span>
         </button>
-
-        <button
-          onClick={() => selectTab("staff")}
-          className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-left transition duration-200 cursor-pointer ${
-            view === "staff" 
-              ? "bg-white/10 text-white font-black border-l-4 border-[#fcc14a]" 
-              : "text-white/70 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
-          }`}
-        >
-          <Users size={18} className={view === "staff" ? "text-[#fcc14a]" : "text-white/60"} />
-          <span className="text-sm">จัดการสิทธิ์พนักงาน</span>
-        </button>
       </div>
 
-      {/* Logout footer */}
+      {/* Footer Info */}
       <div className="p-4 border-t border-white/10 bg-white/2 shrink-0">
-        <button 
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left text-red-300 hover:text-red-200 hover:bg-white/5 transition duration-200 cursor-pointer text-sm font-semibold"
-        >
-          <LogOut size={16} />
-          <span>ออกจากระบบ</span>
-        </button>
+        <p className="text-[10px] text-white/40 font-semibold text-center">
+          Admin Control v1.2.0
+        </p>
       </div>
     </div>
   );
@@ -1634,123 +1595,4 @@ function AdminInventoryView({
   );
 }
 
-// ── 3. Staff Role Management View Component ──
-function AdminStaffView({ 
-  users, 
-  loading, 
-  updateUserRole, 
-  toggleUserActiveStatus,
-  deleteUser
-}: { 
-  users: any[]; 
-  loading: boolean; 
-  updateUserRole: (id: string, role: any) => void;
-  toggleUserActiveStatus: (id: string, current: boolean) => void;
-  deleteUser: (id: string, name: string) => void;
-}) {
 
-  if (loading) {
-    return <div className="text-center py-20 font-bold text-gray-500">กำลังดาวน์โหลดรายชื่อผู้ใช้งาน...</div>;
-  }
-
-  return (
-    <div className="bg-white border border-[#ece4d6] rounded-3xl p-5 shadow-sm space-y-4">
-      <h2 className="text-sm font-black text-[#002e47] mb-3">👥 รายชื่อผู้ใช้ระบบและสิทธิ์การเข้าถึง</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse text-xs sm:text-sm">
-          <thead>
-            <tr className="border-b border-[#ece4d6] text-[#5a6e7a] font-bold">
-              <th className="py-3 px-4">ชื่อผู้ใช้ / อีเมล</th>
-              <th className="py-3 px-4">ระดับสิทธิ์ (Role)</th>
-              <th className="py-3 px-4">สถานะบัญชี</th>
-              <th className="py-3 px-4 text-right">ปรับบทบาทสิทธิ์พนักงาน</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
-            {users.length === 0 ? (
-              <tr><td colSpan={4} className="py-8 text-center text-slate-400 italic">ไม่พบข้อมูลรายชื่อในระบบ</td></tr>
-            ) : (
-              users.map((user) => {
-                const isActive = user.is_active !== false;
-                return (
-                  <tr key={user.id} className="hover:bg-slate-50/50">
-                    <td className="py-3 px-4 flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-slate-100 border overflow-hidden shrink-0 flex items-center justify-center font-bold text-[#002e47] text-xs">
-                        {user.picture_url ? (
-                          <img src={user.picture_url} alt={user.display_name} className="h-full w-full object-cover" />
-                        ) : (
-                          user.display_name.substring(0, 2).toUpperCase()
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-extrabold text-[#002e47]">{user.display_name}</p>
-                        <p className="text-[10px] text-slate-400">{user.email || "ล็อคอินผ่าน LINE/Guest"}</p>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full border ${
-                        user.role === "admin" 
-                          ? "bg-purple-100 text-purple-800 border-purple-200" 
-                          : user.role === "staff" 
-                          ? "bg-blue-100 text-blue-800 border-blue-200" 
-                          : "bg-slate-100 text-slate-600 border-slate-200"
-                      }`}>
-                        {user.role === "admin" ? <ShieldCheck size={11} /> : user.role === "staff" ? <Shield size={11} /> : null}
-                        {user.role.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <button
-                        onClick={() => toggleUserActiveStatus(user.id, isActive)}
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl text-[10px] font-bold border transition cursor-pointer active:scale-95 ${
-                          isActive 
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
-                            : "bg-red-50 text-red-700 border-red-200"
-                        }`}
-                      >
-                        {isActive ? <UserCheck size={11} /> : <UserX size={11} />}
-                        {isActive ? "ใช้งานได้" : "ระงับชั่วคราว"}
-                      </button>
-                    </td>
-                    <td className="py-3 px-4 text-right space-x-1.5">
-                      {user.role !== "admin" ? (
-                        <div className="inline-flex gap-1.5 justify-end items-center">
-                          <button
-                            onClick={() => updateUserRole(user.id, "staff")}
-                            className={`px-2 py-1 rounded text-[10px] font-bold border transition cursor-pointer ${
-                              user.role === "staff" ? "bg-blue-600 text-white border-blue-600" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                            }`}
-                          >
-                            Staff
-                          </button>
-                          <button
-                            onClick={() => updateUserRole(user.id, "customer")}
-                            className={`px-2 py-1 rounded text-[10px] font-bold border transition cursor-pointer ${
-                              user.role === "customer" ? "bg-slate-700 text-white border-slate-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                            }`}
-                          >
-                            Customer
-                          </button>
-                          <button
-                            onClick={() => deleteUser(user.id, user.display_name)}
-                            className="px-2.5 py-1 rounded text-[10px] font-bold border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:border-red-300 transition cursor-pointer active:scale-95 flex items-center gap-1 shrink-0 ml-1"
-                            title="ลบผู้ใช้งาน"
-                          >
-                            <Trash2 size={11} />
-                            <span>ลบ</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-[10px] font-bold text-purple-700 italic">เจ้าของระบบ</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
