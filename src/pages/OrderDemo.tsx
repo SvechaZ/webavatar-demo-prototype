@@ -82,6 +82,27 @@ const projectData: HouseItem[] = [
   { id: 20, code: 'TN20', name: '20-final-boss-crew', style: 'Waterfront Living', type: 'ecommerce', color: '#0369a1', progress: 40, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' }
 ];
 
+// Helper to get bilingual project overview by type
+export const getProjectOverview = (type: string, lang: string): string => {
+  if (type === "accommodation") {
+    return lang === 'en'
+      ? "Resort & Hotel Booking: Complete reservation system featuring room catalogs, date selectors, pricing calculations, and confirmation views."
+      : "ระบบจองที่พักและรีสอร์ท: บริการค้นหาห้องพัก เช็คห้องว่าง ระบุวันเข้าพัก คำนวณราคาห้องพัก และยืนยันการจอง";
+  } else if (type === "flight") {
+    return lang === 'en'
+      ? "Flight Booking Engine: Domestic airline booking portal with interactive passenger inputs, seat mapping, and simulated boarding pass generation."
+      : "ระบบจองตั๋วเครื่องบิน: ค้นหาเที่ยวบิน ระบุจำนวนผู้โดยสาร เลือกที่นั่งบนเครื่องบิน และการออกบอร์ดดิ้งพาสจำลอง";
+  } else if (type === "restaurant") {
+    return lang === 'en'
+      ? "Restaurant Ordering App: Digital dining menu order application with item categorization, shopping cart, checkout billing, and live invoices."
+      : "ระบบสั่งอาหารและรูมเซอร์วิส: เมนูอาหารออนไลน์พร้อมระบบจัดการตะกร้าสินค้า สรุปรายการสั่งซื้อ และพิมพ์ใบเสร็จแบบเรียลไทม์";
+  } else { // ecommerce
+    return lang === 'en'
+      ? "Tech E-Shop Storefront: Complete consumer electronics retail site with category filtering, shopping cart updates, and invoice receipts."
+      : "ร้านค้าออนไลน์อุปกรณ์ไอที: แหล่งรวมแก็ดเจ็ตไอที คัดกรองหมวดหมู่สินค้า หยิบใส่ตะกร้า ชำระเงิน และออกใบเสร็จรับเงิน";
+  }
+};
+
 export default function OrderDemo() {
   const { language } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
@@ -90,43 +111,48 @@ export default function OrderDemo() {
   // Filtering Logic
   const filteredHouses = useMemo(() => {
     return projectData.filter(house => {
+      const overviewText = getProjectOverview(house.type, language);
       const matchesSearch = house.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             house.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            overviewText.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             house.style.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesCategory = selectedCategory === "all" || house.type === selectedCategory;
       
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, language]);
 
   return (
-    <div className="order-theme min-h-[calc(100vh-68px)] bg-stone-50/50 w-full flex flex-col pb-16 selection:bg-sky-600 selection:text-white">
+    <div 
+      className="order-theme min-h-[calc(100vh-68px)] w-full flex flex-col pb-16 selection:bg-primary selection:text-primary-foreground"
+      style={{ backgroundImage: 'var(--grad-mesh)' }}
+    >
       {/* 1. Page Header & Hero */}
-      <header className="w-full bg-white border-b border-stone-200/80 py-8 relative z-10">
+      <header className="w-full bg-card/60 backdrop-blur-md border-b border-border py-8 relative z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           {/* Breadcrumbs */}
-          <nav className="mb-4 flex items-center gap-2 text-xs text-stone-500 font-bold" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-sky-600 transition-colors flex items-center gap-1">
+          <nav className="mb-4 flex items-center gap-2 text-xs text-muted-foreground font-bold" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-primary transition-colors flex items-center gap-1">
               <Home className="size-3" />
               <span>{language === 'en' ? 'Home' : 'หน้าหลัก'}</span>
             </Link>
             <ChevronRight className="size-3 text-stone-400" />
-            <span className="text-stone-800 font-extrabold uppercase font-mono">
+            <span className="text-foreground font-extrabold uppercase font-mono">
               {language === 'en' ? 'Showcase Portal' : 'คลังเดโมพอร์ทัล'}
             </span>
           </nav>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <span className="text-[10px] font-black text-sky-600 uppercase tracking-widest block font-mono">
+              <span className="text-[10px] font-black text-primary uppercase tracking-widest block font-mono">
                 {language === 'en' ? 'TN01 - TN20 Student Projects' : 'โครงการพัฒนาแอปพลิเคชันจากบ้านพัก TN01-TN20'}
               </span>
-              <h1 className="text-3xl md:text-4xl font-black text-stone-900 mt-1 tracking-tight flex items-center gap-2 bg-gradient-to-r from-stone-900 to-stone-700 bg-clip-text text-transparent">
-                <Sparkles className="size-8 text-sky-500 animate-pulse" />
+              <h1 className="text-3xl md:text-4xl font-black text-foreground mt-1 tracking-tight flex items-center gap-2 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                <Sparkles className="size-8 text-primary animate-pulse" />
                 {language === 'en' ? 'TN House Showcase Portal' : 'พอร์ทัลรวบรวมผลงานบ้าน TN'}
               </h1>
-              <p className="text-sm text-stone-500 font-medium mt-2 max-w-2xl leading-relaxed">
+              <p className="text-sm text-muted-foreground font-medium mt-2 max-w-2xl leading-relaxed">
                 {language === 'en'
                   ? "Explore the active web applications developed by Teams TN01 to TN20. Click 'Launch Demo' to open the deployed websites in a new tab."
                   : "รวบรวมเดโมและผลงานการพัฒนาแอปพลิเคชันจากผู้พัฒนาบ้านพัก TN01 ถึง TN20 คลิก 'เปิดดูระบบเดโม' เพื่อทดลองใช้งานหน้าเว็บจริงในแท็บใหม่"
@@ -139,16 +165,16 @@ export default function OrderDemo() {
 
       {/* 2. Search & Filtering Controls */}
       <section className="max-w-7xl mx-auto w-full px-4 md:px-8 mt-10" aria-label="Search and Filter">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white border border-stone-200 p-4 rounded-3xl shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-card border border-border p-4 rounded-3xl shadow-sm">
           {/* Search Input */}
           <div className="relative w-full lg:max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-stone-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <input
               type="text"
               placeholder={language === 'en' ? "Search by code or team name..." : "ค้นหาด้วยรหัสบ้านหรือชื่อทีม..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-stone-50 border border-stone-200 focus:border-sky-500 rounded-2xl text-xs font-bold text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all font-mono"
+              className="w-full pl-10 pr-4 py-2.5 bg-muted/30 border border-border focus:border-primary rounded-2xl text-xs font-bold text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-mono"
             />
           </div>
 
@@ -169,8 +195,8 @@ export default function OrderDemo() {
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`px-3.5 py-2 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-2 cursor-pointer border ${
                     isActive
-                      ? "bg-sky-600 text-white border-sky-600 shadow-sm"
-                      : "text-stone-600 bg-stone-50 hover:bg-stone-100 hover:text-stone-900 border-stone-200"
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "text-muted-foreground bg-muted/30 hover:bg-muted/50 hover:text-foreground border-border"
                   }`}
                 >
                   <Icon className="size-3.5" />
@@ -185,7 +211,7 @@ export default function OrderDemo() {
       {/* 3. Cards Bento Grid */}
       <main className="max-w-7xl mx-auto w-full px-4 md:px-8 mt-8 flex-1">
         {filteredHouses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredHouses.map((house) => {
               // Determine project type details
               let typeLabel = "";
@@ -215,9 +241,9 @@ export default function OrderDemo() {
               return (
                 <motion.div
                   key={house.id}
-                  className="bg-white border border-stone-200/80 rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
+                  className="bg-card border border-border rounded-3xl p-7 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
                   style={{
-                    borderTop: `4px solid ${house.color}`
+                    borderTop: '4px solid #38bdf8'
                   }}
                   whileHover={{ y: -4, scale: 1.01 }}
                 >
@@ -228,74 +254,36 @@ export default function OrderDemo() {
                         <TypeIcon className="size-3" />
                         {typeLabel}
                       </span>
-                      <span className="text-xs font-black text-stone-800 font-mono bg-stone-100 px-2 py-0.5 rounded-lg border border-stone-200/50">
-                        {house.code}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-black text-foreground font-mono bg-muted/50 px-2 py-0.5 rounded-lg border border-border">
+                          {house.code}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Team Names & Details */}
-                    <h3 className="text-sm font-extrabold text-stone-900 mb-1 group-hover:text-sky-600 transition-colors font-mono tracking-tight truncate">
-                      {house.name}
-                    </h3>
-                    <p className="text-[10px] text-stone-500 font-bold mb-4 font-mono">
-                      {language === 'en' ? `Style: ${house.style}` : `สไตล์: ${house.style}`}
-                    </p>
-
-                    {/* Image Placeholder Banner */}
-                    <div className="w-full h-32 rounded-2xl mb-5 overflow-hidden relative flex items-center justify-center bg-stone-50 border border-stone-100">
-                      {/* Gradient Backdrop based on Type */}
-                      {house.type === "accommodation" && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/10 to-orange-500/5" />
-                      )}
-                      {house.type === "flight" && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-indigo-500/5" />
-                      )}
-                      {house.type === "restaurant" && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-teal-500/5" />
-                      )}
-                      {house.type === "ecommerce" && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/10 to-purple-500/5" />
-                      )}
-
-                      {/* Centered Graphic */}
-                      <div className="z-10 p-3.5 rounded-full bg-white shadow-md border border-stone-100 flex items-center justify-center">
-                        <TypeIcon 
-                          className="size-8" 
-                          style={{ color: house.color }}
-                        />
-                      </div>
-
-                      {/* Pulse Status Indicator for Team 7 */}
-                      {isTeam7 && (
-                        <span className="absolute bottom-2.5 right-2.5 bg-emerald-500 text-white font-mono text-[9px] font-black px-2 py-0.5 rounded-md shadow-sm tracking-wider uppercase animate-pulse">
-                          {language === 'en' ? 'OUR TEAM (LIVE)' : 'ทีมของเรา (ใช้งานได้)'}
-                        </span>
-                      )}
+                                        {/* Team Info Layout (Icon Removed) */}
+                    <div className="mb-5">
+                      {/* Team Names & Details */}
+                      <h3 className="text-lg font-black text-foreground mb-2 group-hover:text-primary transition-colors font-mono tracking-tight truncate">
+                        {house.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed min-h-[4.5rem] line-clamp-3">
+                        {getProjectOverview(house.type, language)}
+                      </p>
                     </div>
                   </div>
 
                   {/* Action Link Footer */}
-                  <div className="flex items-center gap-3 pt-3.5 border-t border-stone-100">
-                    {/* Source Code */}
-                    <a
-                      href={house.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2.5 bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-600 hover:text-stone-900 rounded-xl transition-all cursor-pointer flex items-center justify-center"
-                      title={language === 'en' ? "View Code" : "ดูซอร์สโค้ด"}
-                    >
-                      <span className="font-extrabold text-[11px] font-mono">&lt;/&gt;</span>
-                    </a>
-
+                  <div className="flex items-center gap-3 pt-3.5 border-t border-border">
                     {/* Launch Live App */}
                     <a
                       href={house.deployedUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex-1 text-center py-2.5 text-[11px] font-extrabold rounded-xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      className={`flex-1 text-center py-3 text-xs font-extrabold rounded-xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         isTeam7 
-                          ? "bg-emerald-600 hover:bg-emerald-700 border-emerald-700 text-white shadow-sm shadow-emerald-600/10" 
-                          : "bg-white hover:bg-stone-50 border-stone-200 text-stone-700 hover:text-stone-900"
+                          ? "bg-cta hover:bg-cta/90 border-cta text-cta-foreground shadow-sm shadow-cta/10" 
+                          : "bg-card hover:bg-muted/40 border-border text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       <span>{language === 'en' ? 'Launch Demo' : 'เปิดดูระบบเดโม'}</span>
@@ -307,14 +295,14 @@ export default function OrderDemo() {
             })}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white border border-stone-200 rounded-3xl p-8 max-w-md mx-auto shadow-sm">
-            <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-stone-200/50">
-              <Search className="size-6 text-stone-400" />
+          <div className="text-center py-20 bg-card border border-border rounded-3xl p-8 max-w-md mx-auto shadow-sm">
+            <div className="w-16 h-16 bg-muted/40 rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
+              <Search className="size-6 text-muted-foreground" />
             </div>
-            <h3 className="text-sm font-bold text-stone-800 mb-1">
+            <h3 className="text-sm font-bold text-foreground mb-1">
               {language === 'en' ? 'No projects found' : 'ไม่พบผลงานโครงการ'}
             </h3>
-            <p className="text-xs text-stone-500 font-bold">
+            <p className="text-xs text-muted-foreground font-bold">
               {language === 'en' 
                 ? 'Try adjusting your search filters or queries.' 
                 : 'กรุณาลองปรับปรุงคำค้นหาหรือตัวกรองใหม่อีกครั้ง'
