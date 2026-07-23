@@ -96,7 +96,7 @@ export default function OrderAdmin() {
               {language === 'en' ? "Botnoi Restaurant · Kitchen Monitor" : "Botnoi Restaurant · บอร์ดจัดการห้องครัว"}
             </span>
           </div>
-          <Link to="/food-demo" className="text-xs font-bold opacity-80 hover:opacity-100 transition-opacity hover:underline">
+          <Link to="/all-demo" className="text-xs font-bold opacity-80 hover:opacity-100 transition-opacity hover:underline">
             {t("nav.back_to_main")}
           </Link>
         </div>

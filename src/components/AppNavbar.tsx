@@ -6,26 +6,6 @@ import logoNewLightBlue from '../assets/logo-new-light-blue-02.png';
 import textLogoNew from '../assets/Asset-5-8.png';
 import { pagesConfig } from '../config/pages';
 
-const FlightIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px' }}>
-    <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7 3.5 8.5l7.3 3.6-3.6 3.6-3.6-1.8L2 15.4l3.5 1.5 1.5 3.5 1.5-1.5-1.8-3.6 3.6-3.6 3.6 7.3z" />
-  </svg>
-);
-
-const HouseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px' }}>
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-  </svg>
-);
-
-const ITStoreIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px' }}>
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-    <line x1="8" y1="21" x2="16" y2="21"></line>
-    <line x1="12" y1="17" x2="12" y2="21"></line>
-  </svg>
-);
 
 export default function AppNavbar() {
   const location = useLocation();
@@ -35,9 +15,6 @@ export default function AppNavbar() {
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [mobileLangMenuOpen, setMobileLangMenuOpen] = useState(false);
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileDemosOpen, setMobileDemosOpen] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
 
   const supportedLanguages = [
     { code: 'en', label: 'EN', flagCode: 'us', native: 'English' },
@@ -57,28 +34,9 @@ export default function AppNavbar() {
   };
 
   const mainNavPages = pagesConfig.filter(p => p.enabled && !['flight', 'order', 'itstore'].includes(p.id));
-  const demoNavPages = pagesConfig.filter(p => p.enabled && ['flight', 'order', 'itstore'].includes(p.id));
-  const isDemoActive = demoNavPages.some(page => isActive(page.path));
+  const isDemoActive = isActive('/all-demo');
 
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, []);
 
-  useEffect(() => {
-    const handleFocusIn = (e: FocusEvent) => {
-      if (dropdownRef.current?.contains(e.target as Node)) {
-        setDropdownOpen(true);
-      }
-    };
-    document.addEventListener('focusin', handleFocusIn);
-    return () => document.removeEventListener('focusin', handleFocusIn);
-  }, []);
 
   const openDrawer = () => setDrawerOpen(true);
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
@@ -114,9 +72,17 @@ export default function AppNavbar() {
     return () => { document.body.style.overflow = ''; };
   }, [drawerOpen]);
 
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Sticky navbar animation on scroll
   const { scrollY } = useScroll();
-  const navbarPadding = '0.85rem 3rem';
   const isSitePage = location.pathname === '/nia-site-2026';
   const lightBg = useTransform(scrollY, [0, 50], [
     'rgba(250, 251, 252, 0.55)',
@@ -170,11 +136,10 @@ export default function AppNavbar() {
   return (
     <>
       <motion.header
-        className={`navbar ${isSitePage ? 'site2026-theme' : ''}`}
+        className={`navbar ${isSitePage ? 'site2026-theme' : ''} ${scrolled ? 'navbar-scrolled' : ''}`}
         style={{
-          padding: navbarPadding,
           backgroundColor: navbarBg,
-          borderBottomColor: navbarBorder,
+          borderColor: navbarBorder,
           transition: 'none', // Prevent conflict with Framer Motion scroll transform
         }}
       >
@@ -236,98 +201,35 @@ export default function AppNavbar() {
               );
             })}
 
-            {/* Demos Dropdown */}
-            {demoNavPages.length > 0 && (
-              <motion.li
-                ref={dropdownRef}
-                className="nav-item dropdown-wrapper"
-                onMouseEnter={() => setDropdownOpen(true)}
-                onMouseLeave={() => setDropdownOpen(false)}
-                custom={mainNavPages.length}
-                variants={navItemVariants}
-                initial="initial"
-                animate="animate"
+            {/* All Demos — direct link to /all-demo */}
+            <motion.li
+              className={`nav-item ${isDemoActive ? 'active-link' : ''}`}
+              custom={mainNavPages.length}
+              variants={navItemVariants}
+              initial="initial"
+              animate="animate"
+            >
+              <Link
+                to="/all-demo"
+                id="nav-all-demos"
+                onClick={() => window.scrollTo(0, 0)}
+                style={{ whiteSpace: 'nowrap' }}
               >
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  aria-expanded={dropdownOpen}
-                  className={`dropdown-btn ${isDemoActive ? 'active-dropdown' : ''} ${dropdownOpen ? 'dropdown-open' : ''}`}
-                >
-                  <span>{t('nav.all_demos')}</span>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                  {isDemoActive && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="nav-active-pill"
-                      transition={{
-                        x: { type: 'spring', stiffness: 380, damping: 30 },
-                        width: { type: 'spring', stiffness: 380, damping: 30 },
-                        y: { type: 'tween', duration: 0 },
-                        height: { type: 'tween', duration: 0 }
-                      }}
-                    />
-                  )}
-                </button>
-
-                <motion.div
-                  className="dropdown-overlay"
-                  initial="closed"
-                  animate={dropdownOpen ? "open" : "closed"}
-                  variants={{
-                    open: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      pointerEvents: 'auto',
-                      transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
-                    },
-                    closed: {
-                      opacity: 0,
-                      y: 8,
-                      scale: 0.95,
-                      pointerEvents: 'none',
-                      transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] }
-                    }
-                  }}
-                >
-                  {demoNavPages.map((page) => {
-                    const path = page.path;
-                    const id = `nav-${page.id}`;
-                    const key = page.key as any;
-                    const descKey = `${page.key}_desc` as any;
-                    const active = isActive(path);
-
-                    let itemIcon = <ITStoreIcon />;
-                    if (page.id === 'flight') itemIcon = <FlightIcon />;
-                    else if (page.id === 'order') itemIcon = <HouseIcon />;
-
-                    return (
-                      <Link
-                        key={path}
-                        to={path}
-                        id={id}
-                        onClick={() => {
-                          window.scrollTo(0, 0);
-                          setDropdownOpen(false);
-                        }}
-                        className="dropdown-item"
-                        style={active ? { color: 'var(--primary)', background: 'rgba(99, 102, 241, 0.04)' } : undefined}
-                      >
-                        <div className="dropdown-item-icon">
-                          {itemIcon}
-                        </div>
-                        <div className="dropdown-item-content">
-                          <span className="dropdown-item-title">{t(key)}</span>
-                          <span className="dropdown-item-desc">{t(descKey)}</span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </motion.div>
-              </motion.li>
-            )}
+                {t('nav.all_demos')}
+                {isDemoActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="nav-active-pill"
+                    transition={{
+                      x: { type: 'spring', stiffness: 380, damping: 30 },
+                      width: { type: 'spring', stiffness: 380, damping: 30 },
+                      y: { type: 'tween', duration: 0 },
+                      height: { type: 'tween', duration: 0 }
+                    }}
+                  />
+                )}
+              </Link>
+            </motion.li>
           </ul>
         </nav>
 
@@ -337,6 +239,7 @@ export default function AppNavbar() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.25, duration: 0.5 }}
+          style={{ marginLeft: '8rem' }}
         >
           {/* Language Switch Toggle */}
           <div style={{ position: 'relative', zIndex: 10 }}>
@@ -345,10 +248,12 @@ export default function AppNavbar() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.45rem',
+                justifyContent: 'space-between',
+                gap: '0.5rem',
+                minWidth: '95px',
                 backgroundColor: isSitePage ? 'rgba(28, 25, 23, 0.5)' : 'rgba(244, 244, 245, 0.9)',
                 borderRadius: '10px',
-                padding: '0.4rem 0.8rem',
+                padding: '0.45rem 1rem',
                 border: `1px solid ${isSitePage ? 'rgba(244, 63, 94, 0.2)' : 'rgba(228, 228, 231, 0.8)'}`,
                 cursor: 'pointer',
                 fontSize: '0.75rem',
@@ -673,54 +578,19 @@ export default function AppNavbar() {
                     );
                   })}
 
-                  {/* Collapsible Demos in Mobile Drawer */}
-                  {demoNavPages.length > 0 && (
-                    <li className="mobile-nav-item">
-                      <button
-                        onClick={() => setMobileDemosOpen(!mobileDemosOpen)}
-                        className={`mobile-nav-submenu-trigger ${isDemoActive ? 'active-submenu' : ''}`}
-                        aria-expanded={mobileDemosOpen}
-                      >
-                        <span>{t('nav.all_demos')}</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mobileDemosOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                      </button>
-
-                      <AnimatePresence>
-                        {mobileDemosOpen && (
-                          <motion.ul
-                            className="mobile-submenu-list"
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.25, ease: 'easeInOut' }}
-                            style={{ overflow: 'hidden' }}
-                          >
-                            {demoNavPages.map((page) => {
-                              const path = page.path;
-                              const id = `mobile-nav-${page.id}`;
-                              const key = page.key as any;
-                              const active = isActive(path);
-                              return (
-                                <li
-                                  key={path}
-                                  className={`mobile-submenu-item ${active ? 'active-link' : ''}`}
-                                >
-                                  <Link to={path} id={id} onClick={() => {
-                                    window.scrollTo(0, 0);
-                                    closeDrawer();
-                                  }}>
-                                    {t(key)}
-                                  </Link>
-                                </li>
-                              );
-                            })}
-                          </motion.ul>
-                        )}
-                      </AnimatePresence>
-                    </li>
-                  )}
+                  {/* All Demos — direct link in mobile drawer */}
+                  <li className={`mobile-nav-item ${isDemoActive ? 'active-link' : ''}`}>
+                    <Link
+                      to="/all-demo"
+                      id="mobile-nav-all-demos"
+                      onClick={() => {
+                        window.scrollTo(0, 0);
+                        closeDrawer();
+                      }}
+                    >
+                      {t('nav.all_demos')}
+                    </Link>
+                  </li>
                 </ul>
               </nav>
 

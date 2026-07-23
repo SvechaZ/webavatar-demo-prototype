@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { translations, type TranslationKey } from './translations';
+export type { TranslationKey };
 
 type Language = 'en' | 'th' | 'zh' | 'ja' | 'ko' | 'es' | 'fr';
 

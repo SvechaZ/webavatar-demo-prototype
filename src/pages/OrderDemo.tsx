@@ -10,7 +10,7 @@ import {
   ShoppingBag,
   ChevronRight,
   Sparkles,
-  Home
+  FlaskConical
 } from "lucide-react";
 
 // House Item Interface
@@ -49,6 +49,8 @@ export interface Receipt {
 
 // 20 Houses Mock Database mapped to Project Types and URLs
 const projectData: HouseItem[] = [
+  { id: -1, code: 'SANDBOX', name: 'Flight Demo', style: 'Interactive Sandbox', type: 'flight', color: '#0284c7', progress: 100, deployedUrl: '/flight-demo', githubUrl: '' },
+  { id: -2, code: 'SANDBOX', name: 'IT Store Demo', style: 'Interactive Sandbox', type: 'ecommerce', color: '#6366F1', progress: 100, deployedUrl: '/it-store-demo', githubUrl: '' },
   { id: 1, code: 'TN01', name: '01-the-chill-crew', style: 'Modern Minimalist', type: 'accommodation', color: '#6366F1', progress: 85, deployedUrl: 'https://ai-learn-hub-22.lovable.app/', githubUrl: 'https://github.com/Icetea0000000000025/ai-learn-hub-22.git  ' },
   { id: 2, code: 'TN02', name: '02-cozy-oracles', style: 'Neo-Classical', type: 'flight', color: '#b45309', progress: 45, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 3, code: 'TN03', name: '03-controller-kings', style: 'Nordic Timber', type: 'ecommerce', color: '#059669', progress: 90, deployedUrl: 'https://eucerin-mu.vercel.app/', githubUrl: 'https://github.com' },
@@ -56,17 +58,17 @@ const projectData: HouseItem[] = [
   { id: 5, code: 'TN05', name: '05-aesthetic-dreamers', style: 'Cozy Wood Cabin', type: 'accommodation', color: '#78350f', progress: 100, deployedUrl: 'https://hospital-health.lovable.app/', githubUrl: 'https://github.com' },
   { id: 6, code: 'TN06', name: '06-lo-fi-homebodies', style: 'Glass Contemporary', type: 'flight', color: '#0284c7', progress: 60, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   // Team 7 (Ours) - Lovable deployed app
-  { 
-    id: 7, 
-    code: 'TN07', 
-    name: '07-steak-game-bros', 
-    style: 'Organic Earth Dome', 
-    type: 'restaurant', 
-    color: '#10B981', 
-    progress: 80, 
-    deployedUrl: 'https://ran-lung-get-de.vercel.app/customer' ,
+  {
+    id: 7,
+    code: 'TN07',
+    name: '07-steak-game-bros',
+    style: 'Organic Earth Dome',
+    type: 'restaurant',
+    color: '#10B981',
+    progress: 80,
+    deployedUrl: 'https://ran-lung-get-de.vercel.app/customer',
     githubUrl: 'https://github.com/ran-lung-get/ran-lung-get-demo'
-},
+  },
   { id: 8, code: 'TN08', name: '08-vibe-architects', style: 'Industrial Brickwork', type: 'ecommerce', color: '#991b1b', progress: 75, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 9, code: 'TN09', name: '09-sunset-superfans', style: 'Japanese Zen', type: 'accommodation', color: '#16a34a', progress: 100, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' },
   { id: 10, code: 'TN10', name: '10-lazy-mermaids', style: 'Modular Container', type: 'flight', color: '#ca8a04', progress: 30, deployedUrl: 'https://b-grim-dashboard.vercel.app/', githubUrl: 'https://github.com' },
@@ -82,46 +84,160 @@ const projectData: HouseItem[] = [
   { id: 20, code: 'TN20', name: '20-final-boss-crew', style: 'Waterfront Living', type: 'ecommerce', color: '#0369a1', progress: 40, deployedUrl: 'https://example.com', githubUrl: 'https://github.com' }
 ];
 
+// ─── Shared card renderer ─────────────────────────────────────────────────────
+function DemoCard({ house, t }: { house: HouseItem; t: (key: any) => string }) {
+  let typeLabel = "";
+  let TypeIcon = UtensilsCrossed;
+  let typeBg = "bg-stone-50 text-stone-600 border-stone-200";
+  let cardDescription = "";
+
+  if (house.id === -1) {
+    typeLabel = "FLIGHT";
+    TypeIcon = Plane;
+    typeBg = "bg-blue-50 text-blue-700 border-blue-200/50";
+    cardDescription = "Domestic flight booking sandbox";
+  } else if (house.id === -2) {
+    typeLabel = "E-SHOP";
+    TypeIcon = ShoppingBag;
+    typeBg = "bg-indigo-50 text-indigo-700 border-indigo-200/50";
+    cardDescription = "Tech retail e-commerce storefront";
+  } else {
+    cardDescription = t(`showcase.desc_${house.type}` as any);
+    if (house.type === "accommodation") {
+      typeLabel = t("showcase.type_accommodation");
+      TypeIcon = BedDouble;
+      typeBg = "bg-amber-50 text-amber-700 border-amber-200/50";
+    } else if (house.type === "flight") {
+      typeLabel = t("showcase.type_flight");
+      TypeIcon = Plane;
+      typeBg = "bg-blue-50 text-blue-700 border-blue-200/50";
+    } else if (house.type === "restaurant") {
+      typeLabel = t("showcase.type_restaurant");
+      TypeIcon = UtensilsCrossed;
+      typeBg = "bg-emerald-50 text-emerald-700 border-emerald-200/50";
+    } else if (house.type === "ecommerce") {
+      typeLabel = t("showcase.type_ecommerce");
+      TypeIcon = ShoppingBag;
+      typeBg = "bg-indigo-50 text-indigo-700 border-indigo-200/50";
+    }
+  }
+
+  const hasDeployed =
+    house.deployedUrl &&
+    house.deployedUrl.trim() !== "" &&
+    house.deployedUrl.trim() !== "https://example.com";
+
+  return (
+    <motion.div
+      key={house.id}
+      className="bg-card border border-border rounded-3xl p-7 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
+      style={{ borderTop: '4px solid #38bdf8' }}
+      whileHover={{ y: -4, scale: 1.01 }}
+    >
+      <div>
+        {/* Top tags */}
+        <div className="flex items-center justify-between mb-4">
+          <span className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${typeBg}`}>
+            <TypeIcon className="size-3" />
+            {typeLabel}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-black text-foreground font-mono bg-muted/50 px-2 py-0.5 rounded-lg border border-border">
+              {house.code}
+            </span>
+          </div>
+        </div>
+
+        {/* Title & Description */}
+        <div className="mb-5">
+          <h3 className="text-lg font-black text-foreground mb-2 group-hover:text-primary transition-colors font-mono tracking-tight truncate">
+            {house.name}
+          </h3>
+          <p className="text-xs text-muted-foreground leading-relaxed min-h-[4.5rem] line-clamp-3">
+            {cardDescription}
+          </p>
+        </div>
+      </div>
+
+      {/* Action Link Footer */}
+      <div className="flex items-center gap-3 pt-3.5 border-t border-border">
+        {house.deployedUrl.startsWith('/') ? (
+          <Link
+            to={house.deployedUrl}
+            className={`flex-1 text-center py-3 text-xs font-extrabold rounded-xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              hasDeployed
+                ? "bg-cta hover:bg-cta/90 border-cta text-cta-foreground shadow-sm shadow-cta/10"
+                : "bg-card hover:bg-muted/40 border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <span>{t('showcase.launch_demo')}</span>
+            <ChevronRight className="size-3.5" />
+          </Link>
+        ) : (
+          <a
+            href={house.deployedUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex-1 text-center py-3 text-xs font-extrabold rounded-xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              hasDeployed
+                ? "bg-cta hover:bg-cta/90 border-cta text-cta-foreground shadow-sm shadow-cta/10"
+                : "bg-card hover:bg-muted/40 border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <span>{t('showcase.launch_demo')}</span>
+            <ChevronRight className="size-3.5" />
+          </a>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Page Component ───────────────────────────────────────────────────────────
 export default function OrderDemo() {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // Filtering Logic
-  const filteredHouses = useMemo(() => {
-    return projectData.filter(house => {
-      const overviewText = t(`showcase.desc_${house.type}` as any);
-      const matchesSearch = house.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            house.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            overviewText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            house.style.toLowerCase().includes(searchQuery.toLowerCase());
-      
+  // Split filtered results into two groups
+  const { sandboxDemos, projectDemos } = useMemo(() => {
+    const all = projectData.filter(house => {
+      let overviewText = "";
+      if (house.id === -1) {
+        overviewText = "Domestic flight booking sandbox";
+      } else if (house.id === -2) {
+        overviewText = "Tech retail e-commerce storefront";
+      } else {
+        overviewText = t(`showcase.desc_${house.type}` as any);
+      }
+
+      const matchesSearch =
+        house.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        house.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        overviewText.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        house.style.toLowerCase().includes(searchQuery.toLowerCase());
+
       const matchesCategory = selectedCategory === "all" || house.type === selectedCategory;
-      
+
       return matchesSearch && matchesCategory;
     });
+
+    return {
+      sandboxDemos: all.filter(h => h.code === 'SANDBOX'),
+      projectDemos: all.filter(h => h.code !== 'SANDBOX'),
+    };
   }, [searchQuery, selectedCategory, t]);
 
+  const totalResults = sandboxDemos.length + projectDemos.length;
+
   return (
-    <div 
+    <div
       className="order-theme min-h-[calc(100vh-68px)] w-full flex flex-col pb-16 selection:bg-primary selection:text-primary-foreground"
       style={{ backgroundImage: 'var(--grad-mesh)' }}
     >
       {/* 1. Page Header & Hero */}
       <header className="w-full bg-card/60 backdrop-blur-md border-b border-border py-8 relative z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          {/* Breadcrumbs */}
-          <nav className="mb-4 flex items-center gap-2 text-xs text-muted-foreground font-bold" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-primary transition-colors flex items-center gap-1">
-              <Home className="size-3" />
-              <span>{t('nav.home')}</span>
-            </Link>
-            <ChevronRight className="size-3 text-stone-400" />
-            <span className="text-foreground font-extrabold uppercase font-mono">
-              {t('showcase.portal')}
-            </span>
-          </nav>
-
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <span className="text-[10px] font-black text-primary uppercase tracking-widest block font-mono">
@@ -129,7 +245,7 @@ export default function OrderDemo() {
               </span>
               <h1 className="text-3xl md:text-4xl font-black text-foreground mt-1 tracking-tight flex items-center gap-2 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                 <Sparkles className="size-8 text-primary animate-pulse" />
-                {t('showcase.title')}
+                All demo
               </h1>
               <p className="text-sm text-muted-foreground font-medium mt-2 max-w-2xl leading-relaxed">
                 {t('showcase.desc')}
@@ -184,93 +300,10 @@ export default function OrderDemo() {
         </div>
       </section>
 
-      {/* 3. Cards Bento Grid */}
-      <main className="max-w-7xl mx-auto w-full px-4 md:px-8 mt-8 flex-1">
-        {filteredHouses.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredHouses.map((house) => {
-              // Determine project type details
-              let typeLabel = "";
-              let TypeIcon = UtensilsCrossed;
-              let typeBg = "bg-stone-50 text-stone-600 border-stone-200";
-              
-              if (house.type === "accommodation") {
-                typeLabel = t("showcase.type_accommodation");
-                TypeIcon = BedDouble;
-                typeBg = "bg-amber-50 text-amber-700 border-amber-200/50";
-              } else if (house.type === "flight") {
-                typeLabel = t("showcase.type_flight");
-                TypeIcon = Plane;
-                typeBg = "bg-blue-50 text-blue-700 border-blue-200/50";
-              } else if (house.type === "restaurant") {
-                typeLabel = t("showcase.type_restaurant");
-                TypeIcon = UtensilsCrossed;
-                typeBg = "bg-emerald-50 text-emerald-700 border-emerald-200/50";
-              } else if (house.type === "ecommerce") {
-                typeLabel = t("showcase.type_ecommerce");
-                TypeIcon = ShoppingBag;
-                typeBg = "bg-indigo-50 text-indigo-700 border-indigo-200/50";
-              }
+      <main className="max-w-7xl mx-auto w-full px-4 md:px-8 mt-8 flex-1 space-y-12">
 
-              const hasDeployed = house.deployedUrl && house.deployedUrl.trim() !== "" && house.deployedUrl.trim() !== "https://example.com";
-
-              return (
-                <motion.div
-                  key={house.id}
-                  className="bg-card border border-border rounded-3xl p-7 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
-                  style={{
-                    borderTop: '4px solid #38bdf8'
-                  }}
-                  whileHover={{ y: -4, scale: 1.01 }}
-                >
-                  <div>
-                    {/* Top tags */}
-                    <div className="flex items-center justify-between mb-4">
-                      <span className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${typeBg}`}>
-                        <TypeIcon className="size-3" />
-                        {typeLabel}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-black text-foreground font-mono bg-muted/50 px-2 py-0.5 rounded-lg border border-border">
-                          {house.code}
-                        </span>
-                      </div>
-                    </div>
- 
-                                        {/* Team Info Layout (Icon Removed) */}
-                    <div className="mb-5">
-                      {/* Team Names & Details */}
-                      <h3 className="text-lg font-black text-foreground mb-2 group-hover:text-primary transition-colors font-mono tracking-tight truncate">
-                        {house.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed min-h-[4.5rem] line-clamp-3">
-                        {t(`showcase.desc_${house.type}` as any)}
-                      </p>
-                    </div>
-                  </div>
- 
-                  {/* Action Link Footer */}
-                  <div className="flex items-center gap-3 pt-3.5 border-t border-border">
-                    {/* Launch Live App */}
-                    <a
-                      href={house.deployedUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`flex-1 text-center py-3 text-xs font-extrabold rounded-xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                        hasDeployed 
-                          ? "bg-cta hover:bg-cta/90 border-cta text-cta-foreground shadow-sm shadow-cta/10" 
-                          : "bg-card hover:bg-muted/40 border-border text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <span>{t('showcase.launch_demo')}</span>
-                      <ChevronRight className="size-3.5" />
-                    </a>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        ) : (
+        {totalResults === 0 ? (
+          /* Empty state */
           <div className="text-center py-20 bg-card border border-border rounded-3xl p-8 max-w-md mx-auto shadow-sm">
             <div className="w-16 h-16 bg-muted/40 rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
               <Search className="size-6 text-muted-foreground" />
@@ -282,6 +315,48 @@ export default function OrderDemo() {
               {t('showcase.no_projects_desc')}
             </p>
           </div>
+        ) : (
+          <>
+            {/* ── Section 1: Sandbox Demos ───────────────────────────────── */}
+            {sandboxDemos.length > 0 && (
+              <section aria-label="Sandbox Demos">
+                <div className="flex items-center gap-2.5 mb-5">
+                  <FlaskConical className="size-4 text-primary" />
+                  <h2 className="text-xs font-black text-primary uppercase tracking-widest font-mono">
+                    Sandbox Demos
+                  </h2>
+                  <span className="text-[10px] font-black text-muted-foreground bg-muted/40 border border-border px-2 py-0.5 rounded-full font-mono">
+                    {sandboxDemos.length}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {sandboxDemos.map(house => (
+                    <DemoCard key={house.id} house={house} t={t} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* ── Section 2: TN Student Projects ────────────────────────── */}
+            {projectDemos.length > 0 && (
+              <section aria-label="TN Student Projects">
+                <div className="flex items-center gap-2.5 mb-5">
+                  <Sparkles className="size-4 text-primary" />
+                  <h2 className="text-xs font-black text-primary uppercase tracking-widest font-mono">
+                    {t('showcase.student_projects')}
+                  </h2>
+                  <span className="text-[10px] font-black text-muted-foreground bg-muted/40 border border-border px-2 py-0.5 rounded-full font-mono">
+                    {projectDemos.length}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {projectDemos.map(house => (
+                    <DemoCard key={house.id} house={house} t={t} />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
       </main>
     </div>
