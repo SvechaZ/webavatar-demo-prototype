@@ -33,11 +33,12 @@ export default function OrderAdmin() {
               {
                 id: "krapao",
                 name: "ข้าวกะเพราไก่ไข่ดาว",
-                englishName: "Chicken Pad Kra Pao",
-                description: "",
+                nameTh: "ข้าวกะเพราไก่ไข่ดาว",
+                nameEn: "Chicken Pad Kra Pao",
+                descTh: "",
+                descEn: "",
                 category: "เมนูยอดนิยม",
                 price: 89,
-                image: "",
                 quantity: 2
               }
             ],

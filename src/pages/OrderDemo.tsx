@@ -588,7 +588,7 @@ export default function OrderDemo() {
                 activeHouse.code === "TN07" ? (
                   <div className="w-full h-[calc(100vh-68px)] overflow-hidden bg-white">
                     <iframe
-                      src={`https://ran-lung-get.lovable.app/${demoRole}`}
+                      src={`https://ran-lung-get-de.vercel.app//${demoRole}`}
                       className="w-full h-full border-none"
                       title="Ran Lung Get LINE LIFF App"
                       sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
