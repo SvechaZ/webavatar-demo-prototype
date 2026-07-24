@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useTranslation } from "@/lib/LanguageContext";
+import { useTranslation, type TranslationKey } from "@/lib/LanguageContext";
 import {
   Search,
   Plane,
@@ -148,7 +148,7 @@ function isHouseDeployed(house: HouseItem): boolean {
 // ─── Shared card renderer ─────────────────────────────────────────────────────
 function DemoCard({ house, t }: { house: HouseItem; t: (key: any) => string }) {
   const hasDeployed = isHouseDeployed(house);
-  let typeLabel = "";
+  let typeLabel: string;
   let TypeIcon: LucideIcon = UtensilsCrossed;
   let typeBg = "bg-stone-50 text-stone-600 border-stone-200";
   let cardDescription = "";
@@ -380,7 +380,7 @@ export default function OrderDemo() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  aria-label={`Filter by ${t(cat.translationKey)}`}
+                  aria-label={`Filter by ${t(cat.translationKey as TranslationKey)}`}
                   aria-pressed={isActive}
                   className={`px-3.5 py-2 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-2 cursor-pointer border ${
                     isActive
@@ -389,7 +389,7 @@ export default function OrderDemo() {
                   }`}
                 >
                   <Icon className="size-3.5" />
-                  <span>{t(cat.translationKey)}</span>
+                  <span>{t(cat.translationKey as TranslationKey)}</span>
                 </button>
               );
             })}
