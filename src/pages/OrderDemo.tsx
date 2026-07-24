@@ -83,7 +83,7 @@ const projectData: HouseItem[] = [
   {
     id: 7,
     code: 'TN07',
-    name: '07-steak-game-bros',
+    name: '07-steak&game-bros',
     style: 'Organic Earth Dome',
     type: 'restaurant',
     color: '#10B981',
@@ -314,11 +314,12 @@ export default function OrderDemo() {
 
   return (
     <div
-      className="min-h-[calc(100vh-68px)] w-full flex flex-col pb-16 selection:bg-primary selection:text-primary-foreground relative z-10"
+      className="order-theme min-h-[calc(100vh-68px)] w-full flex flex-col pb-16 selection:bg-primary selection:text-primary-foreground"
+      style={{ backgroundImage: 'var(--grad-mesh)' }}
       aria-label="All Demos Showcase Portal"
     >
       {/* 1. Page Header & Hero */}
-      <header className="w-full bg-card/60 backdrop-blur-md border-b border-border py-8 relative z-10" aria-label="Portal Header">
+      <header className="w-full bg-background/20 backdrop-blur-md border-b border-border py-8 relative z-10" aria-label="Portal Header">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
