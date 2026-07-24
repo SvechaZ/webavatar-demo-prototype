@@ -421,8 +421,8 @@ export default function FlightDemo() {
                   <p className="text-[10px] font-bold tracking-widest uppercase opacity-75">{x.label}</p>
                   <p className="mt-1.5 font-display text-xl font-bold tracking-tight">{x.t}</p>
                   
-                  <div className="max-h-0 opacity-0 translate-y-4 group-hover:max-h-32 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out overflow-hidden">
-                    <p className="mt-2 text-xs text-white/70 line-clamp-2 leading-relaxed">{x.desc}</p>
+                  <div className="max-h-0 opacity-0 translate-y-4 group-hover:max-h-48 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out overflow-hidden">
+                    <p className="mt-2 text-xs text-white/70 line-clamp-2 group-hover:line-clamp-none max-h-20 group-hover:overflow-y-auto leading-relaxed pr-1" style={{ scrollbarWidth: 'thin' }}>{x.desc}</p>
                     <div className="mt-4 flex items-end justify-between">
                       <div>
                         <p className="text-[10px] opacity-75">{t('flight.starting_price')}</p>

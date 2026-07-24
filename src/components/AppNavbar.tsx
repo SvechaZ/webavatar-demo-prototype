@@ -156,9 +156,9 @@ export default function AppNavbar() {
             animate="animate"
           >
             <img className="logo-icon" src={logoNewLightBlue} alt="Botnoi Logo" />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                <img src={textLogoNew} alt="Botnoi" style={{ height: '1.25rem', objectFit: 'contain' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <span className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', lineHeight: 1 }}>
+                <img src={textLogoNew} alt="Botnoi" style={{ height: '1.25rem', objectFit: 'contain', verticalAlign: 'middle' }} />
                 <span>Labs</span>
               </span>
             </div>
@@ -419,8 +419,8 @@ export default function AppNavbar() {
             >
               {/* Drawer header */}
               <div className="mobile-drawer-header">
-                <span className="mobile-drawer-logo" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <img src={textLogoNew} alt="Botnoi" style={{ height: '1.15rem', objectFit: 'contain' }} />
+<span className="mobile-drawer-logo" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', lineHeight: 1, verticalAlign: 'middle' }}>
+                <img src={textLogoNew} alt="Botnoi" style={{ height: '1.15rem', objectFit: 'contain', verticalAlign: 'middle' }} />
                   <span>Labs</span>
                 </span>
 

@@ -391,6 +391,14 @@
   line-height: 1.65;
   margin: 0;
   flex-grow: 1;
+  max-height: 4.5rem;
+  overflow-y: hidden;
+  transition: all 0.2s ease;
+  scrollbar-width: thin;
+}
+
+.bento-card:hover p {
+  overflow-y: auto;
 }
 
 .bento-card-footer {

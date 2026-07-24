@@ -160,25 +160,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Card 2: TN01-TN20 Adaptive Workspace Portal */}
-          <div className="bento-card col-4" id="card-order-demo">
-            <div className="bento-card-header">
-              <div className="bento-icon-box" style={{ background: 'linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.08))', border: '1px solid rgba(16,185,129,0.2)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-              </div>
-              <h3 style={{ margin: 0, letterSpacing: '-0.02em' }}>{t('home.card_food_title')}</h3>
-            </div>
-            <p>
-              {t('home.card_food_desc')}
-            </p>
-            <Link className="bento-card-footer" to="/all-demo" id="link-order-demo">
-              {t('home.card_food_cta')} <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-
-          {/* Card 3: IT Store */}
+          {/* Card 2: IT Store */}
           <div className="bento-card col-4" id="card-itstore-demo">
             <div className="bento-card-header">
               <div
@@ -202,8 +184,8 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Card 4: B2B Sales Inquiry — full width */}
-          <div className="bento-card col-12" id="card-nav-demo">
+          {/* Card 3: B2B Sales Inquiry Form (Third card from left) */}
+          <div className="bento-card col-4" id="card-contact-demo">
             <div className="bento-card-header">
               <div className="bento-icon-box">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10zM2 12h20" /></svg>
@@ -213,12 +195,27 @@ export default function Home() {
             <p>
               {t('home.card_contact_desc')}
             </p>
+            <Link className="bento-card-footer" to="/contact" id="link-contact-demo">
+              {t('home.card_contact_cta')} <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+
+          {/* Card 4: All Demos Showcase Portal — full width at bottom */}
+          <div className="bento-card col-12" id="card-all-demo">
+            <div className="bento-card-header">
+              <div className="bento-icon-box" style={{ background: 'linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.08))', border: '1px solid rgba(16,185,129,0.2)' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <h3 style={{ margin: 0, letterSpacing: '-0.02em' }}>{t('home.card_alldemo_title')}</h3>
+            </div>
+            <p>
+              {t('home.card_alldemo_desc')}
+            </p>
             <div style={{ display: 'flex', gap: '2rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-              <Link className="bento-card-footer" style={{ cursor: 'pointer', flex: '1 1 200px', marginTop: 0 }} to="/about" id="link-about-page">
-                {t('nav.about')} <span aria-hidden="true">→</span>
-              </Link>
-              <Link className="bento-card-footer" style={{ cursor: 'pointer', flex: '1 1 200px', marginTop: 0 }} to="/contact" id="link-contact-page">
-                {t('nav.contact')} <span aria-hidden="true">→</span>
+              <Link className="bento-card-footer" style={{ cursor: 'pointer', flex: '1 1 200px', marginTop: 0 }} to="/all-demo" id="link-all-demo">
+                {t('home.card_alldemo_cta')} <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>

@@ -197,7 +197,7 @@ export default function NiaSite2026() {
                   <h3 className="font-bold text-white text-lg mb-2 group-hover:text-rose-400 transition-colors duration-200">
                     {t(activity.titleKey as any)}
                   </h3>
-                  <p className="text-zinc-300 text-xs leading-relaxed max-h-0 opacity-0 group-hover:max-h-[150px] group-hover:opacity-100 transition-all duration-300 overflow-hidden">
+                  <p className="text-zinc-300 text-xs leading-relaxed max-h-0 opacity-0 group-hover:max-h-[150px] group-hover:opacity-100 group-hover:overflow-y-auto transition-all duration-300 overflow-hidden pr-1" style={{ scrollbarWidth: 'thin' }}>
                     {t(activity.descKey as any)}
                   </p>
                 </div>
