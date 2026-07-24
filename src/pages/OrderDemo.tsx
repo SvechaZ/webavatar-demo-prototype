@@ -314,8 +314,7 @@ export default function OrderDemo() {
 
   return (
     <div
-      className="order-theme min-h-[calc(100vh-68px)] w-full flex flex-col pb-16 selection:bg-primary selection:text-primary-foreground"
-      style={{ backgroundImage: 'var(--grad-mesh)' }}
+      className="min-h-[calc(100vh-68px)] w-full flex flex-col pb-16 selection:bg-primary selection:text-primary-foreground relative z-10"
       aria-label="All Demos Showcase Portal"
     >
       {/* 1. Page Header & Hero */}

@@ -5,7 +5,7 @@ import ParticleField from './ParticleField';
 
 export const PersistentBackground: React.FC = () => {
   const location = useLocation();
-  const showBackground = !location.pathname.includes('/flight-demo') && !location.pathname.includes('/all-demo');
+  const showBackground = !location.pathname.includes('/flight-demo');
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
